@@ -33,18 +33,20 @@ fn main() {
     unsafe {
         let _ = JNI_CreateJavaVM(&mut jvm, &mut env as *mut _, &mut jvm_arguments as *mut _);
 
+        println!("java_class_name {:?}", java_class_name);
+
         let java_class : jclass = (**env).FindClass.unwrap()(env, java_class_name);
 
-        let java_method_id : jmethodID = (**env).GetStaticMethodID.unwrap()(
-            env, java_class, java_method_name, java_method_signature
-        );
-
-        println!("java_class_name {:?}", java_class_name);
         println!("java_class {:?}", java_class);
-        println!("java_method_id {:?}", java_method_id);
+
+        //let java_method_id : jmethodID = (**env).GetStaticMethodID.unwrap()(
+        //    env, java_class, java_method_name, java_method_signature
+        //);
+
+        //println!("java_method_id {:?}", java_method_id);
 
         // TODO: This crashes.
-        (**env).CallStaticVoidMethod.unwrap()(env, java_class, java_method_id);
+        //(**env).CallStaticVoidMethod.unwrap()(env, java_class, java_method_id);
 
         // TODO
         //jvm->DestroyJavaVM();
