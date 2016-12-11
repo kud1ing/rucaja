@@ -1,0 +1,7 @@
+[package]
+name = "rucaja"
+version = "0.1.0"
+authors = []
+
+[dependencies]
+jni-sys="0.2.1"
