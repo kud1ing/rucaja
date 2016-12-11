@@ -21,15 +21,13 @@ int main() {
     JavaVM* jvm;
     JNIEnv* env;
 
-    JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    int result = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
 
     //delete[] options;
 
     jclass java_class = env->FindClass("Test");
-    jmethodID java_method_id = env->GetStaticMethodID(java_class, "helloRust", "()V");
 
-    std::cout << "java_class " << java_class << std::endl;
-    std::cout << "java_method_id " << java_method_id << std::endl;
+    jmethodID java_method_id = env->GetStaticMethodID(java_class, "helloRust", "()V");
 
     env->CallStaticVoidMethod(java_class, java_method_id);
 
