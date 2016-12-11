@@ -25,8 +25,8 @@ fn main() {
     let mut jvm = ptr::null_mut();
     let mut env = ptr::null_mut();
 
-    // TODO: make this compile
     unsafe {
+        // TODO: this gives a Segmentation fault: 11
         let ret = JNI_CreateJavaVM(&mut jvm, &mut env as *mut _, &mut jvm_arguments as *mut _);
     }
 
