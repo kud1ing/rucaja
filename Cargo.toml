@@ -2,6 +2,8 @@
 name = "rucaja"
 version = "0.1.0"
 authors = []
+links = "jvm"
+build = "build.rs"
 
 [dependencies]
 jni-sys="0.2.1"

@@ -3,10 +3,15 @@ extern crate jni_sys;
 use jni_sys::{JavaVMInitArgs, JavaVMOption, JNI_FALSE, JNI_VERSION_1_8};
 use std::ffi::CString;
 
+
+#[link(name="jvm")]
+extern {
+}
+
 fn main() {
 
     let mut jvm_options = [JavaVMOption::default()];
-    jvm_options[0].optionString = CString::new("-Djava.class.path=/usr/lib/java").unwrap().into_raw();
+    // jvm_options[0].optionString = CString::new("-Djava.class.path=/usr/lib/java").unwrap().into_raw();
 
     let mut jvm_arguments = JavaVMInitArgs::default();
     jvm_arguments.version = JNI_VERSION_1_8;
