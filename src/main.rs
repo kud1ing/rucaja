@@ -25,7 +25,7 @@ fn main() {
     let mut env = [JNIInvokeInterface_::default()];
 
     // TODO: make this compile
-    // JNI_CreateJavaVM(jvm.as_mut_ptr(), env.as_mut_ptr(), jvm_arguments.as_mut_ptr() as *mut c_void);
+    JNI_CreateJavaVM(jvm.as_mut_ptr(), env.as_mut_ptr(), jvm_arguments.as_mut_ptr() as *mut c_void);
 
     // TODO
     /*
