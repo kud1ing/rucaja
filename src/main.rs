@@ -1,6 +1,6 @@
 extern crate jni_sys;
 
-use jni_sys::{JavaVMInitArgs, JavaVM, JavaVMOption, JNIInvokeInterface_, JNI_FALSE, JNI_VERSION_1_8};
+use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, JNI_FALSE, JNI_VERSION_1_8, JNIInvokeInterface_};
 use std::ffi::CString;
 use std::os::raw::c_void;
 

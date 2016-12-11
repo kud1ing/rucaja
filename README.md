@@ -1,5 +1,6 @@
 # Rucaja (Rust calls Java)
 
+[![Clippy Linting Result](https://clippy.bashy.io/github/kud1ing/rucaja/master/badge.svg)](https://clippy.bashy.io/github/kud1ing/rucaja/master/log)
 
 ## Mac
 
