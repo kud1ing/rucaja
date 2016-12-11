@@ -14,9 +14,9 @@ extern {
 
 fn main() {
 
-    let java_class_name = CString::new("Test").unwrap().into_raw();
-    let java_method_name = CString::new("helloRust").unwrap().into_raw();
-    let java_method_signature = CString::new(")V").unwrap().into_raw();
+    let java_class_name : *const c_char = CString::new("Test").unwrap().into_raw();
+    let java_method_name : *const c_char = CString::new("helloRust").unwrap().into_raw();
+    let java_method_signature : *const c_char = CString::new("()V").unwrap().into_raw();
 
     //let mut jvm_options = [JavaVMOption::default()];
     // jvm_options[0].optionString = CString::new("-Djava.class.path=/usr/lib/java").unwrap().into_raw();
@@ -39,6 +39,7 @@ fn main() {
             env, java_class, java_method_name, java_method_signature
         );
 
+        println!("java_class_name {:?}", java_class_name);
         println!("java_class {:?}", java_class);
         println!("java_method_id {:?}", java_method_id);
 
