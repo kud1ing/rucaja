@@ -32,8 +32,8 @@ fn main() {
     // TODO
     /*
 
-    jclass java_class = env->FindClass("Main");
-    jmethodID java_method_id = env->GetStaticMethodID(java_class, "test", "(I)V");
+    jclass java_class = env->FindClass("Test");
+    jmethodID java_method_id = env->GetStaticMethodID(java_class, "helloRust", "()V");
     env->CallStaticVoidMethod(java_class, java_method_id, 100);
 
     jvm->DestroyJavaVM();

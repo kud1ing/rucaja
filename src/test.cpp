@@ -22,13 +22,11 @@ int main() {
 
     JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
 
-    // TODO
     //delete[] options;
 
-    // TODO
-    //jclass cls = env->FindClass("Main");
-    //jmethodID mid = env->GetStaticMethodID(cls, "test", "(I)V");
-    //env->CallStaticVoidMethod(cls, mid, 100);
+    jclass cls = env->FindClass("Test");
+    jmethodID mid = env->GetStaticMethodID(cls, "helloRust", "()V");
+    env->CallStaticVoidMethod(cls, mid);
 
     // TODO
     //jvm->DestroyJavaVM();
