@@ -5,6 +5,7 @@
 //   clang++ -I /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/include -I /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk//Contents/Home/include/darwin -ljvm -L /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/lib/server test.cpp
 
 #include "jni.h"
+#include <iostream>
 
 int main() {
 
@@ -24,9 +25,13 @@ int main() {
 
     //delete[] options;
 
-    jclass cls = env->FindClass("Test");
-    jmethodID mid = env->GetStaticMethodID(cls, "helloRust", "()V");
-    env->CallStaticVoidMethod(cls, mid);
+    jclass java_class = env->FindClass("Test");
+    jmethodID java_method_id = env->GetStaticMethodID(java_class, "helloRust", "()V");
+
+    std::cout << "java_class " << java_class << std::endl;
+    std::cout << "java_method_id " << java_method_id << std::endl;
+
+    env->CallStaticVoidMethod(java_class, java_method_id);
 
     // TODO
     //jvm->DestroyJavaVM();

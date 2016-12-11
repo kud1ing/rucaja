@@ -39,6 +39,10 @@ fn main() {
             env, java_class, java_method_name, java_method_signature
         );
 
+        println!("java_class {:?}", java_class);
+        println!("java_method_id {:?}", java_method_id);
+
+        // TODO: This crashes.
         (**env).CallStaticVoidMethod.unwrap()(env, java_class, java_method_id);
 
         // TODO
