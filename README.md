@@ -10,6 +10,6 @@ Trying to run may give:
       Reason: image not found
     Abort trap: 6
 
-this would require something like:
+this might require something like:
 
     sudo ln -s $(/usr/libexec/java_home)/jre/lib/server/libjvm.dylib /usr/local/lib
