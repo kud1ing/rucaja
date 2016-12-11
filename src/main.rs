@@ -21,10 +21,11 @@ fn main() {
     jvm_arguments[0].options = jvm_options.as_mut_ptr();
     jvm_arguments[0].ignoreUnrecognized = JNI_FALSE;
 
-    let mut jvm = JNIInvokeInterface_::default();
+    let mut jvm = [JNIInvokeInterface_::default()];
     let mut env = [JNIInvokeInterface_::default()];
 
-    //JNI_CreateJavaVM(jvm.as_mut_ptr(), env.as_mut_ptr(), jvm_arguments.as_mut_ptr());
+    // TODO: make this compile
+    // JNI_CreateJavaVM(jvm.as_mut_ptr(), env.as_mut_ptr(), jvm_arguments.as_mut_ptr() as *mut c_void);
 
     // TODO
     /*
