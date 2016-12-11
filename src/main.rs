@@ -1,12 +1,8 @@
 extern crate jni_sys;
 
-use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jclass, jint, jmethodID, JNI_FALSE, JNI_VERSION_1_8, JNIEnv, JNINativeInterface_};
-use std::ffi::CStr;
+use jni_sys::{JavaVM, JavaVMInitArgs, jclass, jint, jmethodID, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
 use std::ffi::CString;
-use std::os::raw::c_char;
-use std::os::raw::c_void;
 use std::ptr;
-use std::str;
 
 
 #[link(name="jvm")]
@@ -29,7 +25,7 @@ fn main() {
     let mut env : *mut JNIEnv = ptr::null_mut();
 
     unsafe {
-        let result = JNI_CreateJavaVM(&mut jvm, &mut env as *mut _, &mut jvm_arguments as *mut _);
+        let _ = JNI_CreateJavaVM(&mut jvm, &mut env as *mut _, &mut jvm_arguments as *mut _);
 
         // Get the Java class.
         let java_class : jclass = (**env).FindClass.unwrap()(env, java_class_name.as_ptr());
