@@ -1,7 +1,7 @@
 extern crate jni_sys;
 
-use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jclass, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv, JNINativeInterface_};
-// use std::ffi::CString;
+use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jclass, jint, jmethodID, JNI_FALSE, JNI_VERSION_1_8, JNIEnv, JNINativeInterface_};
+use std::ffi::CString;
 use std::os::raw::c_char;
 use std::os::raw::c_void;
 use std::ptr;
@@ -13,6 +13,10 @@ extern {
 }
 
 fn main() {
+
+    let java_class_name = CString::new("Test").unwrap().into_raw();
+    let java_method_name = CString::new("helloRust").unwrap().into_raw();
+    let java_method_signature = CString::new(")V").unwrap().into_raw();
 
     //let mut jvm_options = [JavaVMOption::default()];
     // jvm_options[0].optionString = CString::new("-Djava.class.path=/usr/lib/java").unwrap().into_raw();
@@ -28,18 +32,17 @@ fn main() {
 
     unsafe {
         let _ = JNI_CreateJavaVM(&mut jvm, &mut env as *mut _, &mut jvm_arguments as *mut _);
+
+        let java_class : jclass = (**env).FindClass.unwrap()(env, java_class_name);
+
+        let java_method_id : jmethodID = (**env).GetStaticMethodID.unwrap()(
+            env, java_class, java_method_name, java_method_signature
+        );
+
+        (**env).CallStaticVoidMethod.unwrap()(env, java_class, java_method_id);
+
+        // TODO
+        //jvm->DestroyJavaVM();
     }
 
-    // TODO: make this compile
-    let java_class = (*env).FindClass.unwrap()("Test");
-
-    // TODO
-    /*
-
-    jclass java_class = env->FindClass("Test");
-    jmethodID java_method_id = env->GetStaticMethodID(java_class, "helloRust", "()V");
-    env->CallStaticVoidMethod(java_class, java_method_id, 100);
-
-    jvm->DestroyJavaVM();
-    */
 }
