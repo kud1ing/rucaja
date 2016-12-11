@@ -14,9 +14,9 @@ extern {
 
 fn main() {
 
-    let java_class_name : *const c_char = CString::new("Test").unwrap().into_raw();
-    let java_method_name : *const c_char = CString::new("helloRust").unwrap().into_raw();
-    let java_method_signature : *const c_char = CString::new("()V").unwrap().into_raw();
+    let java_class_name : *const c_char = CString::new("Test").unwrap().as_ptr();
+    let java_method_name : *const c_char = CString::new("helloRust").unwrap().as_ptr();
+    let java_method_signature : *const c_char = CString::new("()V").unwrap().as_ptr();
 
     //let mut jvm_options = [JavaVMOption::default()];
     // jvm_options[0].optionString = CString::new("-Djava.class.path=/usr/lib/java").unwrap().into_raw();
