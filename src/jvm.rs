@@ -2,7 +2,7 @@ use jni_sys::{JavaVM, JavaVMInitArgs, jclass, jint, jmethodID, JNI_FALSE, JNI_VE
 use std::ffi::CString;
 use std::ptr;
 
-
+///
 pub struct Jvm {
     jvm: *mut JavaVM,
     jni_environment: *mut JNIEnv,
