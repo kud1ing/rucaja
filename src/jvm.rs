@@ -1,4 +1,4 @@
-use jni_sys::{JavaVM, JavaVMInitArgs, jclass, jint, jmethodID, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
+use jni_sys::{JavaVM, JavaVMInitArgs, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
@@ -44,7 +44,7 @@ impl Jvm {
     }
 
     ///
-    pub fn class(&self, java_class_name: &str) -> Option<JvmClass> {
+    pub fn get_class(&self, java_class_name: &str) -> Option<JvmClass> {
 
         let java_class_name_cstring = CString::new(java_class_name).unwrap();
 
@@ -58,7 +58,7 @@ impl Jvm {
     }
 
     ///
-    pub fn static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
+    pub fn get_static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
 
         let java_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let java_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
