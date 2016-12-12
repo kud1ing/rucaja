@@ -4,6 +4,10 @@
 
 Calling Java code from Rust via JNI.
 
+This is currently only tested on macOS 10.12.
+Your platform might need adjustments in `build.rs`.
+
+
 ## Mac
 
 Trying to run may give:

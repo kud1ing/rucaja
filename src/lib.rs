@@ -46,7 +46,7 @@ impl Jvm {
     ///
     pub fn find_class(&self, java_class_name: &str) -> jclass {
 
-        let java_class_name_cstring : CString = CString::new(java_class_name).unwrap();
+        let java_class_name_cstring = CString::new(java_class_name).unwrap();
 
         unsafe {
             (**self.jni_environment).FindClass.unwrap()(
@@ -58,8 +58,8 @@ impl Jvm {
     ///
     pub fn get_static_method_id(&self, java_class: &jclass, java_method_name: &str, java_method_signature: &str) -> jmethodID {
 
-        let java_method_name_cstring : CString = CString::new(java_method_name).unwrap();
-        let java_method_signature_cstring : CString = CString::new(java_method_signature).unwrap();
+        let java_method_name_cstring = CString::new(java_method_name).unwrap();
+        let java_method_signature_cstring = CString::new(java_method_signature).unwrap();
 
         unsafe {
             (**self.jni_environment).GetStaticMethodID.unwrap()(
@@ -85,6 +85,8 @@ impl Drop for Jvm {
 
 #[link(name="jvm")]
 extern {
+    // TODO: use this signature: first cast to *mut *mut *const jni_sys::JNINativeInterface_ and then to *mut *mut c_void.
+    // TODO: use `JNI_CreateJavaVM()` from rust-jni-sys > 0.2.1:
     //fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut c_void, args: *mut c_void) -> jint;
     fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut JNIEnv, args: *mut JavaVMInitArgs) -> jint;
 }

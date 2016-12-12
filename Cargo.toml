@@ -1,9 +1,12 @@
 [package]
-name = "rucaja"
-version = "0.1.0"
 authors = []
-links = "jvm"
 build = "build.rs"
+description = "Calling Java code from Rust via JNI"
+keywords = ["java", "jni"]
+links = "jvm"
+name = "rucaja"
+readme = "README.md"
+version = "0.1.0"
 
 [dependencies]
 jni-sys="0.2.1"

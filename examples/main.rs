@@ -2,9 +2,7 @@ extern crate rucaja;
 
 use rucaja::Jvm;
 
-
 fn main() {
-
     let jvm = Jvm::new();
 
     // Get the Java class.
