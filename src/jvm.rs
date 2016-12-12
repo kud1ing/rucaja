@@ -58,7 +58,7 @@ impl Jvm {
     }
 
     ///
-    pub fn get_static_method_id(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
+    pub fn static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
 
         let java_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let java_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
