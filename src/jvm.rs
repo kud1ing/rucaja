@@ -1,5 +1,6 @@
 use jni_sys::{JavaVM, JavaVMInitArgs, jclass, jint, jmethodID, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
 use jvm_class::JvmClass;
+use jvm_method::JvmMethod;
 use std::ffi::CString;
 use std::ptr;
 
@@ -34,10 +35,10 @@ impl Jvm {
     }
 
     ///
-    pub fn call_static_void_method(&self, java_class: &JvmClass, jvm_method_id: &jmethodID) {
+    pub fn call_static_void_method(&self, java_class: &JvmClass, jvm_method: &JvmMethod) {
         unsafe {
             (**self.jni_environment).CallStaticVoidMethod.unwrap()(
-                self.jni_environment, *java_class.java_class_ptr(), *jvm_method_id
+                self.jni_environment, *java_class.java_class_ptr(), *jvm_method.java_method_ptr()
             );
         }
     }
@@ -57,17 +58,19 @@ impl Jvm {
     }
 
     ///
-    pub fn get_static_method_id(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> jmethodID {
+    pub fn get_static_method_id(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
 
         let java_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let java_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
-        unsafe {
+        let java_method_ptr = unsafe {
             (**self.jni_environment).GetStaticMethodID.unwrap()(
                 self.jni_environment, *jvm_class.java_class_ptr(), java_method_name_cstring.as_ptr(),
                 java_method_signature_cstring.as_ptr()
             )
-        }
+        };
+
+        JvmMethod::maybe_new(java_method_ptr)
     }
 }
 
