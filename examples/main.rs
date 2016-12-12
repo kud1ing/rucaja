@@ -1,6 +1,6 @@
 extern crate rucaja;
 
-use rucaja::Jvm;
+use rucaja::jvm::Jvm;
 
 fn main() {
     let jvm = Jvm::new();
