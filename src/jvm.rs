@@ -1,4 +1,5 @@
 use jni_sys::{JavaVM, JavaVMInitArgs, jclass, jint, jmethodID, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
+use jvm_class::JvmClass;
 use std::ffi::CString;
 use std::ptr;
 
@@ -33,35 +34,37 @@ impl Jvm {
     }
 
     ///
-    pub fn call_static_void_method(&self, java_class: &jclass, java_method_id: &jmethodID) {
+    pub fn call_static_void_method(&self, java_class: &JvmClass, jvm_method_id: &jmethodID) {
         unsafe {
             (**self.jni_environment).CallStaticVoidMethod.unwrap()(
-                self.jni_environment, *java_class, *java_method_id
+                self.jni_environment, *java_class.java_class_ptr(), *jvm_method_id
             );
         }
     }
 
     ///
-    pub fn find_class(&self, java_class_name: &str) -> jclass {
+    pub fn class(&self, java_class_name: &str) -> Option<JvmClass> {
 
         let java_class_name_cstring = CString::new(java_class_name).unwrap();
 
-        unsafe {
+        let java_class_ptr = unsafe {
             (**self.jni_environment).FindClass.unwrap()(
                 self.jni_environment, java_class_name_cstring.as_ptr()
             )
-        }
+        };
+
+        JvmClass::maybe_new(java_class_ptr)
     }
 
     ///
-    pub fn get_static_method_id(&self, java_class: &jclass, java_method_name: &str, java_method_signature: &str) -> jmethodID {
+    pub fn get_static_method_id(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> jmethodID {
 
-        let java_method_name_cstring = CString::new(java_method_name).unwrap();
-        let java_method_signature_cstring = CString::new(java_method_signature).unwrap();
+        let java_method_name_cstring = CString::new(jvm_method_name).unwrap();
+        let java_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
         unsafe {
             (**self.jni_environment).GetStaticMethodID.unwrap()(
-                self.jni_environment, *java_class, java_method_name_cstring.as_ptr(),
+                self.jni_environment, *jvm_class.java_class_ptr(), java_method_name_cstring.as_ptr(),
                 java_method_signature_cstring.as_ptr()
             )
         }
