@@ -70,7 +70,7 @@ impl Jvm {
             )
         };
 
-        JvmClass::maybe_new(&self, jvm_class_ptr)
+        JvmClass::maybe_new(self, jvm_class_ptr)
     }
 
     /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
