@@ -12,8 +12,8 @@ Your platform might need adjustments in `build.rs`.
 
 JVM options:
 
-* -verbose:jni
-* -Xcheck:jni:trace
+* `-verbose:jni`
+* `-Xcheck:jni:trace`
 
 
 ## Mac
