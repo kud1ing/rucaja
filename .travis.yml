@@ -7,8 +7,4 @@ matrix:
   allow_failures:
     - rust: nightly
 before_install:
-  - ls -l $JAVA_HOME/lib
-  - ls -l $JAVA_HOME/lib/i386/server/
-  - ls -l $JAVA_HOME/jre
-  - ls -l $JAVA_HOME/jre/lib
-  - ls -l $JAVA_HOME/jre/lib/server
+  - find $JAVA_HOME
