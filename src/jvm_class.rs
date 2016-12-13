@@ -3,13 +3,15 @@ use jvm::Jvm;
 
 
 ///
-pub struct JvmClass {
+pub struct JvmClass<'a> {
+
+    jvm: &'a Jvm,
 
     // Guaranteed not to be a null pointer.
     jvm_class_ptr: jclass,
 }
 
-impl JvmClass {
+impl<'a> JvmClass<'a> {
 
     ///
     pub fn jvm_class_ptr(&self) -> &jclass {
@@ -23,24 +25,29 @@ impl JvmClass {
             return None
         }
 
-        // Create a global reference to the given JVM class object, to prevent GC claiming it.
+        // Create a global JVM reference to the given JVM class object, to prevent GC claiming it.
         unsafe {
             (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_class_ptr);
         }
 
-        Some(JvmClass { jvm_class_ptr: jvm_class_ptr } )
+        Some(
+            JvmClass {
+                jvm: jvm,
+                jvm_class_ptr: jvm_class_ptr
+            }
+        )
     }
 }
 
-// TODO
-/*
-impl Drop for JvmObject {
+
+impl<'a> Drop for JvmClass<'a> {
     fn drop(&mut self) {
 
+        // Delete the global JVM reference to the given JVM class object.
         unsafe {
-            // Destroy the global reference to the JVM object.
-            (*env)->DeleteGlobalRef(env, bufferCls);
+            (**self.jvm.jni_environment()).DeleteGlobalRef.unwrap()(
+                self.jvm.jni_environment(), self.jvm_class_ptr
+            );
         }
     }
 }
-*/

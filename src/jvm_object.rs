@@ -2,13 +2,15 @@ use jni_sys::jobject;
 use jvm::Jvm;
 
 ///
-pub struct JvmObject {
+pub struct JvmObject<'a> {
+
+    jvm: &'a Jvm,
 
     // Guaranteed not to be a null pointer.
     jvm_object_ptr: jobject,
 }
 
-impl JvmObject {
+impl<'a> JvmObject<'a> {
 
     ///
     pub fn jvm_object_ptr(&self) -> &jobject {
@@ -22,24 +24,29 @@ impl JvmObject {
             return None
         }
 
-        // Create a global reference to the given JVM object, to prevent GC claiming it.
+        // Create a global JVM reference to the given JVM object, to prevent GC claiming it.
         unsafe {
             (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_object_ptr);
         }
 
-        Some(JvmObject { jvm_object_ptr: jvm_object_ptr } )
+        Some(
+            JvmObject {
+                jvm: jvm,
+                jvm_object_ptr: jvm_object_ptr
+            }
+        )
     }
 }
 
-// TODO
-/*
-impl Drop for JvmObject {
+
+impl<'a> Drop for JvmObject<'a> {
     fn drop(&mut self) {
 
+        // Delete the global JVM reference to the given JVM object.
         unsafe {
-            // Destroy the global reference to the JVM object.
-            (*env)->DeleteGlobalRef(env, bufferCls);
+            (**self.jvm.jni_environment()).DeleteGlobalRef.unwrap()(
+                self.jvm.jni_environment(), self.jvm_object_ptr
+            );
         }
     }
 }
-*/
