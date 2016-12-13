@@ -1,8 +1,9 @@
-use jni_sys::{JavaVM, JavaVMInitArgs, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
+use jni_sys::{JavaVM, JavaVMInitArgs, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv, JNINativeInterface_};
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
 use std::ptr;
+use std::os::raw::c_void;
 
 ///
 pub struct Jvm {
@@ -27,7 +28,9 @@ impl Jvm {
 
         unsafe {
             let _ = JNI_CreateJavaVM(
-                &mut jvm.jvm, &mut jvm.jni_environment as *mut _, &mut jvm_arguments as *mut _
+                &mut jvm.jvm,
+                (&mut jvm.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
+                (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
             );
         }
 
@@ -99,8 +102,6 @@ impl Drop for Jvm {
 
 #[link(name="jvm")]
 extern {
-    // TODO: use this signature: first cast to *mut *mut *const jni_sys::JNINativeInterface_ and then to *mut *mut c_void.
     // TODO: use `JNI_CreateJavaVM()` from rust-jni-sys > 0.2.1:
-    //fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut c_void, args: *mut c_void) -> jint;
-    fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut JNIEnv, args: *mut JavaVMInitArgs) -> jint;
+    fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut c_void, args: *mut c_void) -> jint;
 }
