@@ -4,9 +4,6 @@ Calling Java code from Rust via JNI.
 
 The interface is not yet stable.
 
-The code is currently only tested on macOS and Linux.
-Your platform might need adjustments in `build.rs`.
-
 
 ## Tracing
 
@@ -16,7 +13,12 @@ JVM options:
 * `-Xcheck:jni:trace`
 
 
-## Mac
+## Platforms
+
+The code is currently only tested on macOS and Linux.
+Your platform might need adjustments in `build.rs`.
+
+### Mac
 
 Trying to run may give:
 

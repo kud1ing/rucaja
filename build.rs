@@ -2,7 +2,7 @@ use std::env;
 
 fn main() {
 
-    // Try to determine the Java home directory so that we can linl to `libjvm`.
+    // Try to determine the Java home directory so that we can link to `libjvm`.
     let java_home =
         env::var("JAVA_HOME")
         .ok()
