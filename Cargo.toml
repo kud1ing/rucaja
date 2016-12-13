@@ -1,8 +1,9 @@
 [package]
-authors = []
+authors = ["Lennart Kudling"]
 build = "build.rs"
 description = "Calling Java code from Rust via JNI"
 keywords = ["java", "jni"]
+license = "MIT/Apache-2.0"
 links = "jvm"
 name = "rucaja"
 readme = "README.md"
