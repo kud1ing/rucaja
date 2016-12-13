@@ -8,6 +8,13 @@ This is currently only tested on macOS 10.12.
 Your platform might need adjustments in `build.rs`.
 
 
+## Tracing
+
+JVM options:
+
+* -verbose:jni
+* -Xcheck:jni:trace
+
 ## Mac
 
 Trying to run may give:

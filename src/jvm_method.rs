@@ -4,24 +4,24 @@ use jni_sys::jmethodID;
 pub struct JvmMethod {
     
     // Guaranteed not to be a null pointer.
-    java_method_ptr: jmethodID,
+    jvm_method_ptr: jmethodID,
 }
 
 impl JvmMethod {
 
     ///
-    pub fn java_method_ptr(&self) -> &jmethodID {
-        &self.java_method_ptr
+    pub fn jvm_method_ptr(&self) -> &jmethodID {
+        &self.jvm_method_ptr
     }
 
     ///
-    pub fn maybe_new(java_method_ptr: jmethodID) -> Option<JvmMethod> {
+    pub fn maybe_new(jvm_method_ptr: jmethodID) -> Option<JvmMethod> {
 
-        if java_method_ptr.is_null() {
+        if jvm_method_ptr.is_null() {
             return None
         }
 
-        Some(JvmMethod { java_method_ptr: java_method_ptr } )
+        Some(JvmMethod { jvm_method_ptr: jvm_method_ptr } )
     }
 }
 

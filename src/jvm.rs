@@ -35,42 +35,47 @@ impl Jvm {
     }
 
     ///
-    pub fn call_static_void_method(&self, java_class: &JvmClass, jvm_method: &JvmMethod) {
+    pub fn call_static_void_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) {
         unsafe {
             (**self.jni_environment).CallStaticVoidMethod.unwrap()(
-                self.jni_environment, *java_class.java_class_ptr(), *jvm_method.java_method_ptr()
+                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr()
             );
+
+            // An exception occured.
+            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
+                panic!("An exception occured");
+            };
         }
     }
 
     ///
-    pub fn get_class(&self, java_class_name: &str) -> Option<JvmClass> {
+    pub fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
 
-        let java_class_name_cstring = CString::new(java_class_name).unwrap();
+        let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
 
-        let java_class_ptr = unsafe {
+        let jvm_class_ptr = unsafe {
             (**self.jni_environment).FindClass.unwrap()(
-                self.jni_environment, java_class_name_cstring.as_ptr()
+                self.jni_environment, jvm_class_name_cstring.as_ptr()
             )
         };
 
-        JvmClass::maybe_new(java_class_ptr)
+        JvmClass::maybe_new(jvm_class_ptr)
     }
 
     ///
     pub fn get_static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
 
-        let java_method_name_cstring = CString::new(jvm_method_name).unwrap();
-        let java_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
+        let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
+        let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
-        let java_method_ptr = unsafe {
+        let jvm_method_ptr = unsafe {
             (**self.jni_environment).GetStaticMethodID.unwrap()(
-                self.jni_environment, *jvm_class.java_class_ptr(), java_method_name_cstring.as_ptr(),
-                java_method_signature_cstring.as_ptr()
+                self.jni_environment, *jvm_class.jvm_class_ptr(), jvm_method_name_cstring.as_ptr(),
+                jvm_method_signature_cstring.as_ptr()
             )
         };
 
-        JvmMethod::maybe_new(java_method_ptr)
+        JvmMethod::maybe_new(jvm_method_ptr)
     }
 }
 

@@ -4,23 +4,23 @@ use jni_sys::jclass;
 pub struct JvmClass {
 
     // Guaranteed not to be a null pointer.
-    java_class_ptr: jclass,
+    jvm_class_ptr: jclass,
 }
 
 impl JvmClass {
 
     ///
-    pub fn java_class_ptr(&self) -> &jclass {
-        &self.java_class_ptr
+    pub fn jvm_class_ptr(&self) -> &jclass {
+        &self.jvm_class_ptr
     }
 
     ///
-    pub fn maybe_new(java_class_ptr: jclass) -> Option<JvmClass> {
+    pub fn maybe_new(jvm_class_ptr: jclass) -> Option<JvmClass> {
 
-        if java_class_ptr.is_null() {
+        if jvm_class_ptr.is_null() {
             return None
         }
 
-        Some(JvmClass { java_class_ptr: java_class_ptr } )
+        Some(JvmClass { jvm_class_ptr: jvm_class_ptr } )
     }
 }
