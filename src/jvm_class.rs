@@ -2,7 +2,7 @@ use jni_sys::jclass;
 use jvm::Jvm;
 
 
-///
+/// Represents a class in the JVM.
 pub struct JvmClass<'a> {
 
     jvm: &'a Jvm,

@@ -1,6 +1,7 @@
 use jni_sys::jmethodID;
 
-///
+
+/// Represents a method in a class in the JVM.
 pub struct JvmMethod {
     
     // Guaranteed not to be a null pointer.

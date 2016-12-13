@@ -5,15 +5,20 @@ use std::ffi::CString;
 use std::ptr;
 use std::os::raw::c_void;
 
-///
+
+/// Represents the JVM and the JNI environment.
 pub struct Jvm {
+
+    /// The JVM.
     jvm: *mut JavaVM,
+
+    /// The JNI environment.
     jni_environment: *mut JNIEnv,
 }
 
 impl Jvm {
 
-    ///
+    /// Instantiates the JVM and the JNI environment.
     pub fn new() -> Jvm {
 
         let mut jvm = Jvm {
@@ -21,11 +26,13 @@ impl Jvm {
             jni_environment: ptr::null_mut(),
         };
 
+        // Create the JVM arguments.
         let mut jvm_arguments = JavaVMInitArgs::default();
         jvm_arguments.version = JNI_VERSION_1_8;
         jvm_arguments.nOptions = 0;
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
+        // Create the JVM.
         unsafe {
             let _ = JNI_CreateJavaVM(
                 &mut jvm.jvm,
@@ -37,7 +44,8 @@ impl Jvm {
         jvm
     }
 
-    ///
+    /// Tries to call the given JVM method in the given JVM class.
+    /// Currently panics if a JVM exception occurs.
     pub fn call_static_void_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) {
         unsafe {
             (**self.jni_environment).CallStaticVoidMethod.unwrap()(
@@ -51,7 +59,7 @@ impl Jvm {
         }
     }
 
-    ///
+    /// Tries to resolve the JVM class with the given name.
     pub fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
 
         let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
@@ -65,7 +73,7 @@ impl Jvm {
         JvmClass::maybe_new(&self, jvm_class_ptr)
     }
 
-    ///
+    /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
     pub fn get_static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
@@ -81,7 +89,7 @@ impl Jvm {
         JvmMethod::maybe_new(jvm_method_ptr)
     }
 
-    ///
+    /// Returns the JNI environment.
     pub fn jni_environment(&self) -> *mut JNIEnv {
         self.jni_environment
     }

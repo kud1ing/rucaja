@@ -1,7 +1,8 @@
 use jni_sys::jobject;
 use jvm::Jvm;
 
-///
+
+/// Represents an object in the JVM.
 pub struct JvmObject<'a> {
 
     jvm: &'a Jvm,
