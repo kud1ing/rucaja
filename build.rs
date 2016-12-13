@@ -9,5 +9,5 @@ fn main() {
         .unwrap_or("/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home".to_string());
 
     print!("cargo:rustc-link-search=native=");
-    println!("{}/jdk1.8.0_51.jdk/Contents/Home/jre/lib/server", java_home);
+    println!("{}/jre/lib/server", java_home);
 }
