@@ -1,7 +1,7 @@
 [package]
 authors = ["Lennart Kudling"]
 build = "build.rs"
-description = "Calling Java code from Rust via JNI"
+description = "Rust Calls Java - via JNI"
 documentation = "https://docs.rs/crate/rucaja"
 keywords = ["java", "jni"]
 license = "MIT/Apache-2.0"
