@@ -15,6 +15,7 @@ JVM options:
 * -verbose:jni
 * -Xcheck:jni:trace
 
+
 ## Mac
 
 Trying to run may give:
