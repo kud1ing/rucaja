@@ -1,4 +1,4 @@
-use jni_sys::{JavaVM, JavaVMInitArgs, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv, JNINativeInterface_};
+use jni_sys::{JavaVM, JavaVMInitArgs, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
