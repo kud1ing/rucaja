@@ -59,7 +59,7 @@ impl Jvm {
             )
         };
 
-        JvmClass::maybe_new(jvm_class_ptr)
+        JvmClass::maybe_new(&self, jvm_class_ptr)
     }
 
     ///
@@ -76,6 +76,11 @@ impl Jvm {
         };
 
         JvmMethod::maybe_new(jvm_method_ptr)
+    }
+
+    ///
+    pub fn jni_environment(&self) -> *mut JNIEnv {
+        self.jni_environment
     }
 }
 
