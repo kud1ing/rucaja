@@ -6,7 +6,9 @@
 
 Calling Java code from Rust via JNI.
 
-The interface is not yet stable and the code is currently only tested on macOS 10.12.
+The interface is not yet stable.
+
+The code is currently only tested on macOS and Linux.
 Your platform might need adjustments in `build.rs`.
 
 
