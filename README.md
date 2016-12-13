@@ -1,5 +1,7 @@
 # Rucaja (Rust calls Java)
 
+[![Build Status](https://travis-ci.org/kud1ing/rucaja.svg?branch=master)](https://travis-ci.org/kud1ing/rucaja)
+
 [![Clippy Linting Result](https://clippy.bashy.io/github/kud1ing/rucaja/master/badge.svg)](https://clippy.bashy.io/github/kud1ing/rucaja/master/log)
 
 Calling Java code from Rust via JNI.
