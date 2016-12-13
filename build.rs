@@ -10,4 +10,10 @@ fn main() {
 
     print!("cargo:rustc-link-search=native=");
     println!("{}/jre/lib/server", java_home);
+
+    print!("cargo:rustc-link-search=native=");
+    println!("{}/jre/lib/amd64/server", java_home);
+
+    print!("cargo:rustc-link-search=native=");
+    println!("{}/jre/lib/i386/server", java_home);
 }
