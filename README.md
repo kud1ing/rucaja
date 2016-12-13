@@ -15,7 +15,7 @@ JVM options:
 
 ## Platforms
 
-The code is currently only tested on macOS and Linux.
+The code is tested on Linux and macOS.
 Your platform might need adjustments in `build.rs`.
 
 ### Mac
