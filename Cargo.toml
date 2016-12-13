@@ -2,11 +2,13 @@
 authors = ["Lennart Kudling"]
 build = "build.rs"
 description = "Calling Java code from Rust via JNI"
+documentation = "https://docs.rs/crate/rucaja"
 keywords = ["java", "jni"]
 license = "MIT/Apache-2.0"
 links = "jvm"
 name = "rucaja"
 readme = "README.md"
+repository = "https://github.com/kud1ing/rucaja"
 version = "0.1.0"
 
 [dependencies]
