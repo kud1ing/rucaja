@@ -86,7 +86,7 @@ impl Jvm {
         jvm
     }
 
-    /// Tries to call the given JVM method in the given JVM class.
+    /// Tries to call the given JVM static method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
     pub fn call_static_void_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) {
         unsafe {

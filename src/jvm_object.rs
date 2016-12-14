@@ -30,6 +30,10 @@ impl<'a> JvmObject<'a> {
             (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_object_ptr)
         };
 
+        if jvm_object_ptr_global.is_null() {
+            return None;
+        }
+
         Some(
             JvmObject {
                 jvm: jvm,
