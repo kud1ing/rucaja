@@ -21,11 +21,11 @@ impl Jvm {
     /// Instantiates the JVM and the JNI environment.
     pub fn new(jvm_option_strings: &[&str]) -> Jvm {
 
+        // Create the JVM structure.
         let mut jvm = Jvm {
             jvm: ptr::null_mut(),
             jni_environment: ptr::null_mut(),
         };
-
 
         // TODO: create the options vector.
         //let jvm_options =
@@ -78,7 +78,7 @@ impl Jvm {
             )
         };
 
-        JvmClass::maybe_new(self, jvm_class_ptr)
+        JvmClass::new(self, jvm_class_ptr)
     }
 
     /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
@@ -101,7 +101,7 @@ impl Jvm {
             )
         };
 
-        JvmMethod::maybe_new(jvm_method_ptr)
+        JvmMethod::new(jvm_method_ptr)
     }
 
     /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
@@ -117,7 +117,7 @@ impl Jvm {
             )
         };
 
-        JvmMethod::maybe_new(jvm_method_ptr)
+        JvmMethod::new(jvm_method_ptr)
     }
 
     /// Returns the JNI environment.

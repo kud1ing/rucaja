@@ -19,7 +19,7 @@ impl<'a> JvmObject<'a> {
     }
 
     ///
-    pub fn maybe_new(jvm: &Jvm, jvm_object_ptr: jobject) -> Option<JvmObject> {
+    pub fn new(jvm: &Jvm, jvm_object_ptr: jobject) -> Option<JvmObject> {
 
         if jvm_object_ptr.is_null() {
             return None

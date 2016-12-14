@@ -16,7 +16,7 @@ impl JvmMethod {
     }
 
     ///
-    pub fn maybe_new(jvm_method_ptr: jmethodID) -> Option<JvmMethod> {
+    pub fn new(jvm_method_ptr: jmethodID) -> Option<JvmMethod> {
 
         if jvm_method_ptr.is_null() {
             return None
