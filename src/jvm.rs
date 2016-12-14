@@ -112,6 +112,13 @@ impl Jvm {
             )
         };
 
+        unsafe {
+            // An exception occured.
+            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
+                panic!("An exception occured");
+            };
+        }
+
         JvmClass::new(self, jvm_class_ptr)
     }
 
@@ -135,6 +142,13 @@ impl Jvm {
             )
         };
 
+        unsafe {
+            // An exception occured.
+            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
+                panic!("An exception occured");
+            };
+        }
+
         JvmMethod::new(jvm_method_ptr)
     }
 
@@ -150,6 +164,13 @@ impl Jvm {
                 jvm_method_signature_cstring.as_ptr()
             )
         };
+
+        unsafe {
+            // An exception occured.
+            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
+                panic!("An exception occured");
+            };
+        }
 
         JvmMethod::new(jvm_method_ptr)
     }
