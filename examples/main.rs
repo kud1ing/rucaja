@@ -4,7 +4,12 @@ use rucaja::Jvm;
 
 fn main() {
 
-    let jvm_options = ["-verbose:jni"];
+    let jvm_options = [
+        "-verbose:gc",
+        "-verbose:jni",
+        "-Xcheck:jni",
+    ];
+
     let jvm = Jvm::new(&jvm_options);
 
     let jvm_class = jvm.get_class("Test").expect("Could not find JVM class");

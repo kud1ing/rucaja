@@ -67,9 +67,6 @@ impl Jvm {
             jvm_options.push(jvm_option);
         }
 
-        // Create the JVM options array.
-        let jvm_options : &mut [JavaVMOption] = &mut [];
-
         // Create the JVM arguments.
         let mut jvm_arguments = JavaVMInitArgs::default();
         jvm_arguments.version = JNI_VERSION_1_8;
