@@ -94,9 +94,13 @@ impl Jvm {
                 self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr()
             );
 
-            // An exception occured.
+            // An exception occurred.
             if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-                panic!("An exception occured");
+
+                // Print the JVM exception.
+                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
+
+                panic!("An exception occurred");
             };
         }
     }
@@ -113,9 +117,11 @@ impl Jvm {
         };
 
         unsafe {
-            // An exception occured.
+            // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
             if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-                panic!("An exception occured");
+
+                // Print the JVM exception.
+                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
             };
         }
 
@@ -143,9 +149,13 @@ impl Jvm {
         };
 
         unsafe {
-            // An exception occured.
+            // An exception occurred.
             if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-                panic!("An exception occured");
+
+                // Print the JVM exception.
+                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
+
+                panic!("An exception occurred");
             };
         }
 
@@ -166,9 +176,13 @@ impl Jvm {
         };
 
         unsafe {
-            // An exception occured.
+            // An exception occurred.
             if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-                panic!("An exception occured");
+
+                // Print the JVM exception.
+                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
+
+                panic!("An exception occurred");
             };
         }
 
