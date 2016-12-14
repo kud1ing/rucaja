@@ -81,6 +81,28 @@ impl Jvm {
         JvmClass::maybe_new(self, jvm_class_ptr)
     }
 
+    /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
+    pub fn get_constructor(&self, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
+
+        self.get_method(jvm_class, "<init>", jvm_method_signature)
+    }
+
+    /// Tries to resolve the JVM method with the given name and signature in the given JVM class.
+    pub fn get_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
+
+        let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
+        let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
+
+        let jvm_method_ptr = unsafe {
+            (**self.jni_environment).GetMethodID.unwrap()(
+                self.jni_environment, *jvm_class.jvm_class_ptr(), jvm_method_name_cstring.as_ptr(),
+                jvm_method_signature_cstring.as_ptr()
+            )
+        };
+
+        JvmMethod::maybe_new(jvm_method_ptr)
+    }
+
     /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
     pub fn get_static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
 
