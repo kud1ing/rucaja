@@ -22,7 +22,7 @@ impl<'a> JvmObject<'a> {
     pub fn new(jvm: &Jvm, jvm_object_ptr: jobject) -> Option<JvmObject> {
 
         if jvm_object_ptr.is_null() {
-            return None
+            return None;
         }
 
         // Create a global JVM reference to the given JVM object, to prevent GC claiming it.

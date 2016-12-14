@@ -19,7 +19,7 @@ impl JvmMethod {
     pub fn new(jvm_method_ptr: jmethodID) -> Option<JvmMethod> {
 
         if jvm_method_ptr.is_null() {
-            return None
+            return None;
         }
 
         Some(JvmMethod { jvm_method_ptr: jvm_method_ptr } )
