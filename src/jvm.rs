@@ -19,17 +19,25 @@ pub struct Jvm {
 impl Jvm {
 
     /// Instantiates the JVM and the JNI environment.
-    pub fn new() -> Jvm {
+    pub fn new(jvm_option_strings: &[&str]) -> Jvm {
 
         let mut jvm = Jvm {
             jvm: ptr::null_mut(),
             jni_environment: ptr::null_mut(),
         };
 
+
+        // TODO: create the options vector.
+        //let jvm_options =
+        // JavaVMOption options[4];
+        // options[0].optionString = "-Djava.compiler=NONE";
+
         // Create the JVM arguments.
         let mut jvm_arguments = JavaVMInitArgs::default();
         jvm_arguments.version = JNI_VERSION_1_8;
-        jvm_arguments.nOptions = 0;
+        // TODO
+        // jvm_arguments.options = jvm_options;
+        jvm_arguments.nOptions = 0; //jvm_option_strings.len();
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
         // Create the JVM.

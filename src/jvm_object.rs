@@ -43,7 +43,7 @@ impl<'a> JvmObject<'a> {
 impl<'a> Drop for JvmObject<'a> {
     fn drop(&mut self) {
 
-        // Delete the global JVM reference to the given JVM object.
+        // Delete the global JVM reference to the JVM object.
         unsafe {
             (**self.jvm.jni_environment()).DeleteGlobalRef.unwrap()(
                 self.jvm.jni_environment(), self.jvm_object_ptr
