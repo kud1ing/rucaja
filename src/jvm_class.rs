@@ -26,14 +26,14 @@ impl<'a> JvmClass<'a> {
         }
 
         // Create a global JVM reference to the given JVM class object, to prevent GC claiming it.
-        unsafe {
-            (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_class_ptr);
-        }
+        let jvm_class_ptr_global = unsafe {
+            (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_class_ptr)
+        };
 
         Some(
             JvmClass {
                 jvm: jvm,
-                jvm_class_ptr: jvm_class_ptr
+                jvm_class_ptr: jvm_class_ptr_global
             }
         )
     }
@@ -46,7 +46,8 @@ impl<'a> Drop for JvmClass<'a> {
         // Delete the global JVM reference to the JVM class object.
         unsafe {
             (**self.jvm.jni_environment()).DeleteGlobalRef.unwrap()(
-                self.jvm.jni_environment(), self.jvm_class_ptr
+                self.jvm.jni_environment(),
+                self.jvm_class_ptr
             );
         }
     }

@@ -26,14 +26,14 @@ impl<'a> JvmObject<'a> {
         }
 
         // Create a global JVM reference to the given JVM object, to prevent GC claiming it.
-        unsafe {
-            (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_object_ptr);
-        }
+        let jvm_object_ptr_global = unsafe {
+            (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_object_ptr)
+        };
 
         Some(
             JvmObject {
                 jvm: jvm,
-                jvm_object_ptr: jvm_object_ptr
+                jvm_object_ptr: jvm_object_ptr_global
             }
         )
     }
