@@ -8,4 +8,5 @@ matrix:
     - rust: nightly
 os:
   - linux
-  - osx
+  # TODO: find out where libvm is on Travis.
+  #- osx
