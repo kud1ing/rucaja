@@ -19,6 +19,17 @@ pub struct Jvm {
 impl Jvm {
 
     /// Instantiates the JVM and the JNI environment.
+    ///
+    /// # Arguments
+    ///
+    /// * `jvm_option_strings` - a list of JVM options.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rucaja::Jvm;
+    /// let jvm = Jvm::new(&["-Xcheck:jni"]);
+    /// ```
     pub fn new(jvm_option_strings: &[&str]) -> Jvm {
 
         // Create the JVM structure.
