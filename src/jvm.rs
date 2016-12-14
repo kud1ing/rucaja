@@ -1,4 +1,4 @@
-use jni_sys::{JavaVM, JavaVMInitArgs, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
+use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
@@ -15,6 +15,17 @@ pub struct Jvm {
     /// The JNI environment.
     jni_environment: *mut JNIEnv,
 }
+
+/*
+fn java_option_string_to_jvm_option(java_option_string: &str) -> JavaVMOption {
+    let java_option = JavaVMOption::default();
+
+    // *mut c_char
+    java_option.optionString = java_option_string.as;
+
+    java_option
+}
+*/
 
 impl Jvm {
 
@@ -38,17 +49,32 @@ impl Jvm {
             jni_environment: ptr::null_mut(),
         };
 
-        // TODO: create the options vector.
-        //let jvm_options =
-        // JavaVMOption options[4];
-        // options[0].optionString = "-Djava.compiler=NONE";
+        // Wrap the JVM option string slices in a vector of `CString`s.
+        let mut jvm_option_cstrings : Vec<CString> = Vec::new();
+
+        for jvm_option_string in jvm_option_strings.iter() {
+            jvm_option_cstrings.push(CString::new(*jvm_option_string).unwrap());
+        }
+
+        // Create a vector of `JavaVMOption` each referencing a `CString`.
+        let mut jvm_options : Vec<JavaVMOption> = Vec::new();
+
+        for jvm_option_cstring in jvm_option_cstrings.iter() {
+
+            let mut jvm_option = JavaVMOption::default();
+            jvm_option.optionString = jvm_option_cstring.as_ptr() as *mut i8;
+
+            jvm_options.push(jvm_option);
+        }
+
+        // Create the JVM options array.
+        let jvm_options : &mut [JavaVMOption] = &mut [];
 
         // Create the JVM arguments.
         let mut jvm_arguments = JavaVMInitArgs::default();
         jvm_arguments.version = JNI_VERSION_1_8;
-        // TODO
-        // jvm_arguments.options = jvm_options;
-        jvm_arguments.nOptions = 0; //jvm_option_strings.len();
+        jvm_arguments.options = jvm_options.as_mut_ptr();
+        jvm_arguments.nOptions = jvm_options.len() as i32;
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
         // Create the JVM.
