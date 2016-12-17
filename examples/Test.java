@@ -12,11 +12,11 @@ class Test {
     }
 
     public static double staticDoubleMethod() {
-        return 42.42f;
+        return 42.0f;
     }
 
     public static float staticFloatMethod() {
-        return 42.1f;
+        return 42.0f;
     }
 
     public static int staticIntMethod() {
@@ -24,7 +24,7 @@ class Test {
     }
 
     public static long staticLongMethod() {
-        return 4242L;
+        return 42L;
     }
 
     public static String staticObjectMethod() {

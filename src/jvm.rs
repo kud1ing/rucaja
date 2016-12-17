@@ -31,7 +31,6 @@ unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 }
 
 
-
 impl Jvm {
 
     /// Instantiates the JVM and the JNI environment.
@@ -90,6 +89,62 @@ impl Jvm {
 
         jvm
     }
+
+    // TODO: call_object_method()
+
+    // TODO: call_boolean_method()
+
+    // TODO: call_byte_method()
+
+    // TODO: call_char_method()
+
+    // TODO: call_short_method()
+
+    // TODO: call_int_method()
+
+    // TODO: call_long_method()
+
+    // TODO: call_float_method()
+
+    // TODO: call_double_method()
+
+    // TODO: call_void_method()
+
+    // TODO: call_nonvirtual_object_method()
+
+    // TODO: call_nonvirtual_boolean_method()
+
+    // TODO: call_nonvirtual_byte_method()
+
+    // TODO: call_nonvirtual_char_method()
+
+    // TODO: call_nonvirtual_short_method()
+
+    // TODO: call_nonvirtual_int_method()
+
+    // TODO: call_nonvirtual_long_method()
+
+    // TODO: call_nonvirtual_float_method()
+
+    // TODO: call_nonvirtual_double_method()
+
+    // TODO: call_nonvirtual_void_method()
+
+    // TODO: call_static_boolean_method()
+
+    // TODO: call_static_byte_method()
+
+    // TODO: call_static_char_method()
+
+    // TODO: call_static_double_method()
+
+    // TODO: call_static_float_method()
+
+    // TODO: call_static_int_method()
+
+    // TODO: call_static_long_method()
+
+    // TODO: call_static_object_method()
 
     /// Tries to call the given JVM static method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
