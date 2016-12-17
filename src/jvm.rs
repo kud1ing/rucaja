@@ -16,16 +16,21 @@ pub struct Jvm {
     jni_environment: *mut JNIEnv,
 }
 
-/*
-fn java_option_string_to_jvm_option(java_option_string: &str) -> JavaVMOption {
-    let java_option = JavaVMOption::default();
 
-    // *mut c_char
-    java_option.optionString = java_option_string.as;
+///
+unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
-    java_option
+    // An exception occurred.
+    if !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() {
+
+        // Print the JVM exception.
+        (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
+
+        panic!("An exception occurred");
+    };
 }
-*/
+
+
 
 impl Jvm {
 
@@ -94,14 +99,7 @@ impl Jvm {
                 self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr()
             );
 
-            // An exception occurred.
-            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-
-                // Print the JVM exception.
-                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
-
-                panic!("An exception occurred");
-            };
+            print_and_panic_on_jvm_exception(self.jni_environment);
         }
     }
 
@@ -149,14 +147,7 @@ impl Jvm {
         };
 
         unsafe {
-            // An exception occurred.
-            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-
-                // Print the JVM exception.
-                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
-
-                panic!("An exception occurred");
-            };
+            print_and_panic_on_jvm_exception(self.jni_environment);
         }
 
         JvmMethod::new(jvm_method_ptr)
@@ -176,14 +167,7 @@ impl Jvm {
         };
 
         unsafe {
-            // An exception occurred.
-            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-
-                // Print the JVM exception.
-                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
-
-                panic!("An exception occurred");
-            };
+            print_and_panic_on_jvm_exception(self.jni_environment);
         }
 
         JvmMethod::new(jvm_method_ptr)
