@@ -62,14 +62,16 @@ impl Jvm {
     ///
     /// * `jvm_option_strings` - a list of JVM options.
     ///
-    /// # Example
-    ///
-    /// ```
-    /// use rucaja::Jvm;
-    /// unsafe {
-    ///   Jvm::new(&["-Xcheck:jni"]);
-    /// }
-    /// ```
+
+    // TODO: enable example. this currently crashs rustdoc
+    // # Example
+    //
+    // ```
+    // use rucaja::Jvm;
+    // unsafe {
+    //   Jvm::new(&["-Xcheck:jni"]);
+    // }
+    // ```
     pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
 
         // Create the JVM structure.
