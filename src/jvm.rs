@@ -324,7 +324,7 @@ mod tests {
     #[test]
     fn test_drop() {
 
-        // TODO: This SIGSEGVs
+        // TODO: This SIGSEGVs. It goes away if we do not call `DestroyJavaVM()`
         for _ in 0..10 {
             unsafe {
                 Jvm::new(&[]);
