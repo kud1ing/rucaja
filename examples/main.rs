@@ -1,7 +1,7 @@
 extern crate jni_sys;
 extern crate rucaja;
 
-use jni_sys::{jboolean, JNI_FALSE, JNI_TRUE};
+use jni_sys::{JNI_FALSE, JNI_TRUE};
 use rucaja::{jvalue_from_jboolean, Jvm};
 use std::ptr::null;
 

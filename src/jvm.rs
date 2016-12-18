@@ -29,6 +29,16 @@ pub fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
     }
 }
 
+///
+unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
+
+    // An exception occurred.
+    if !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() {
+
+        // Print the JVM exception.
+        (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
+    };
+}
 
 ///
 unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
@@ -208,9 +218,13 @@ impl Jvm {
             // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
             if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
 
-                // Print the JVM exception.
-                (**self.jni_environment).ExceptionDescribe.unwrap()(self.jni_environment);
+                // Print any JVM exception.
+                print_jvm_exception(self.jni_environment);
             };
+        }
+
+        if jvm_class_ptr.is_null() {
+            return None;
         }
 
         JvmClass::new(self, jvm_class_ptr)
@@ -239,7 +253,12 @@ impl Jvm {
         };
 
         unsafe {
-            print_and_panic_on_jvm_exception(self.jni_environment);
+            // Print any JVM exception.
+            print_jvm_exception(self.jni_environment);
+        }
+
+        if jvm_method_ptr.is_null() {
+            return None;
         }
 
         JvmMethod::new(jvm_method_ptr)
@@ -261,7 +280,12 @@ impl Jvm {
         };
 
         unsafe {
-            print_and_panic_on_jvm_exception(self.jni_environment);
+            // Print any JVM exception.
+            print_jvm_exception(self.jni_environment);
+        }
+
+        if jvm_method_ptr.is_null() {
+            return None;
         }
 
         JvmMethod::new(jvm_method_ptr)
