@@ -67,7 +67,7 @@ impl Jvm {
     /// ```
     /// use rucaja::Jvm;
     /// unsafe {
-    ///   let jvm = Jvm::new(&["-Xcheck:jni"]);
+    ///   Jvm::new(&["-Xcheck:jni"]);
     /// }
     /// ```
     pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
@@ -81,14 +81,14 @@ impl Jvm {
         // Wrap the JVM option string slices in a vector of `CString`s.
         let mut jvm_option_cstrings : Vec<CString> = Vec::new();
 
-        for jvm_option_string in jvm_option_strings.iter() {
+        for jvm_option_string in jvm_option_strings {
             jvm_option_cstrings.push(CString::new(*jvm_option_string).unwrap());
         }
 
         // Create a vector of `JavaVMOption` each referencing a `CString`.
         let mut jvm_options : Vec<JavaVMOption> = Vec::new();
 
-        for jvm_option_cstring in jvm_option_cstrings.iter() {
+        for jvm_option_cstring in &jvm_option_cstrings {
 
             let mut jvm_option = JavaVMOption::default();
             jvm_option.optionString = jvm_option_cstring.as_ptr() as *mut i8;
