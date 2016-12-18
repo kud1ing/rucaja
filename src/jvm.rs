@@ -28,6 +28,15 @@ pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
     jvalue
 }
 
+/// Wrapps a `jobject` in a `jvalue`.
+pub unsafe fn jvalue_from_jobject(arg: jobject) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.l() = arg;
+
+    jvalue
+}
+
 ///
 unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 

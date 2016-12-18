@@ -2,43 +2,43 @@ extern crate jni_sys;
 extern crate rucaja;
 
 use jni_sys::{JNI_FALSE, JNI_TRUE};
-use rucaja::{jvalue_from_jboolean, Jvm, JvmClass};
+use rucaja::{jvalue_from_jboolean, jvalue_from_jobject, Jvm, JvmClass, JvmMethod};
 use std::ptr::null;
 
 
-fn call_static_boolean_method(jvm: &Jvm, jvm_class: &JvmClass) {
+fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
         let args = vec![jvalue_from_jboolean(JNI_FALSE)];
-        let jvm_method = jvm.get_static_method(&jvm_class, "staticBooleanMethod", "(Z)Z").expect("Could not find JVM method");
-        let result = jvm.call_static_boolean_method(&jvm_class, &jvm_method, args.as_ptr());
+        let jvm_method = jvm.get_static_method(&class, "staticBooleanMethod", "(Z)Z").expect("Could not find JVM method");
+        let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
         println!("`call_static_boolean_method()`; {:?}", result);
 
         let args = vec![jvalue_from_jboolean(JNI_TRUE)];
-        let jvm_method = jvm.get_static_method(&jvm_class, "staticBooleanMethod", "(Z)Z").expect("Could not find JVM method");
-        let result = jvm.call_static_boolean_method(&jvm_class, &jvm_method, args.as_ptr());
+        let jvm_method = jvm.get_static_method(&class, "staticBooleanMethod", "(Z)Z").expect("Could not find JVM method");
+        let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
         println!("`call_static_boolean_method()`; {:?}", result);
     }
 }
 
-fn call_static_object_method(jvm: &Jvm, jvm_class: &JvmClass) {
+fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
     unsafe {
-        let jvm_method = jvm.get_static_method(&jvm_class, "staticObjectMethod", "()Ljava/lang/String;").expect("Could not find JVM method");
-        let result = jvm.call_static_object_method(&jvm_class, &jvm_method, null());
+        let jvm_method = jvm.get_static_method(&class, "staticObjectMethod", "()Ljava/lang/String;").expect("Could not find JVM method");
+        let result = jvm.call_static_object_method(&class, &jvm_method, null());
         println!("`call_static_object_method(): {:?}`", result);
 
-        // Print the object.
-        //let args = vec![result];
-        //jvm.call_static_void_method(&jvm_class, &jvm_println_method, args.as_ptr());
+        // Print the JVM object.
+        let args = vec![jvalue_from_jobject(result)];
+        jvm.call_static_void_method(&class, &println, args.as_ptr());
     }
 }
 
-fn call_static_void_method(jvm: &Jvm, jvm_class: &JvmClass) {
+fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
-        let jvm_method = jvm.get_static_method(&jvm_class, "staticVoidMethod", "()V").expect("Could not find JVM method");
-        jvm.call_static_void_method(&jvm_class, &jvm_method, null());
+        let jvm_method = jvm.get_static_method(&class, "staticVoidMethod", "()V").expect("Could not find JVM method");
+        jvm.call_static_void_method(&class, &jvm_method, null());
         println!("`call_static_void_method()`");
     }
 }
@@ -53,13 +53,11 @@ fn main() {
 
     unsafe {
         let jvm = Jvm::new(&jvm_options);
-        let jvm_class = jvm.get_class("Test").expect("Could not find JVM class");
+        let class = jvm.get_class("Test").expect("Could not find JVM class");
+        let println = jvm.get_static_method(&class, "println", "(Ljava/lang/Object;)V").expect("Could not find JVM method");
 
-        let jvm_system_class = jvm.get_class("java/lang/System").expect("Could not find JVM class");
-        //let jvm_println_method = jvm.get_static_method(&jvm_class, "println", "()(Ljava/lang/Object;)V").expect("Could not find JVM method");
-
-        call_static_boolean_method(&jvm, &jvm_class);
-        call_static_object_method(&jvm, &jvm_class);
-        call_static_void_method(&jvm, &jvm_class);
+        call_static_boolean_method(&jvm, &class);
+        call_static_object_method(&jvm, &class, &println);
+        call_static_void_method(&jvm, &class);
     }
 }
