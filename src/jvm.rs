@@ -20,13 +20,12 @@ pub struct Jvm {
 }
 
 /// Wrapps a `jboolean` in a `jvalue`.
-pub fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
-    unsafe {
-        let mut jvalue = jvalue::default();
-        *jvalue.z() = arg;
+pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
 
-        jvalue
-    }
+    let mut jvalue = jvalue::default();
+    *jvalue.z() = arg;
+
+    jvalue
 }
 
 ///
@@ -69,7 +68,7 @@ impl Jvm {
     /// use rucaja::Jvm;
     /// let jvm = Jvm::new(&["-Xcheck:jni"]);
     /// ```
-    pub fn new(jvm_option_strings: &[&str]) -> Jvm {
+    pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
 
         // Create the JVM structure.
         let mut jvm = Jvm {
@@ -103,13 +102,11 @@ impl Jvm {
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
         // Create the JVM.
-        unsafe {
-            let _ = JNI_CreateJavaVM(
-                &mut jvm.jvm,
-                (&mut jvm.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
-                (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
-            );
-        }
+        let _ = JNI_CreateJavaVM(
+            &mut jvm.jvm,
+            (&mut jvm.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
+            (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
+        );
 
         jvm
     }
@@ -161,18 +158,17 @@ impl Jvm {
 
     /// Tries to call the given JVM static boolean method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
-    pub fn call_static_boolean_method(
+    pub unsafe fn call_static_boolean_method(
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) -> jboolean {
-        unsafe {
-            let result : jboolean =  (**self.jni_environment).CallStaticBooleanMethodA.unwrap()(
-                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
-            );
 
-            print_and_panic_on_jvm_exception(self.jni_environment);
+        let result : jboolean =  (**self.jni_environment).CallStaticBooleanMethodA.unwrap()(
+            self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
+        );
 
-            result
-        }
+        print_and_panic_on_jvm_exception(self.jni_environment);
+
+        result
     }
 
     // TODO: call_static_byte_method()
@@ -191,37 +187,33 @@ impl Jvm {
 
     /// Tries to call the given JVM static void method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
-    pub fn call_static_void_method(
+    pub unsafe fn call_static_void_method(
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) {
-        unsafe {
-            (**self.jni_environment).CallStaticVoidMethodA.unwrap()(
-                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
-            );
+        (**self.jni_environment).CallStaticVoidMethodA.unwrap()(
+            self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
+        );
 
-            print_and_panic_on_jvm_exception(self.jni_environment);
-        }
+        print_and_panic_on_jvm_exception(self.jni_environment);
+
     }
 
     /// Tries to resolve the JVM class with the given name.
-    pub fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
+    pub unsafe fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
 
         let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
 
-        let jvm_class_ptr = unsafe {
+        let jvm_class_ptr =
             (**self.jni_environment).FindClass.unwrap()(
                 self.jni_environment, jvm_class_name_cstring.as_ptr()
-            )
+            );
+
+        // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
+        if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
+
+            // Print any JVM exception.
+            print_jvm_exception(self.jni_environment);
         };
-
-        unsafe {
-            // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
-            if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
-
-                // Print any JVM exception.
-                print_jvm_exception(self.jni_environment);
-            };
-        }
 
         if jvm_class_ptr.is_null() {
             return None;
@@ -231,30 +223,27 @@ impl Jvm {
     }
 
     /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
-    pub fn get_constructor(&self, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
+    pub unsafe fn get_constructor(&self, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
 
         self.get_method(jvm_class, "<init>", jvm_method_signature)
     }
 
     /// Tries to resolve the JVM method with the given name and signature in the given JVM class.
-    pub fn get_method(
+    pub unsafe fn get_method(
         &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
-        let jvm_method_ptr = unsafe {
+        let jvm_method_ptr =
             (**self.jni_environment).GetMethodID.unwrap()(
                 self.jni_environment, *jvm_class.jvm_class_ptr(), jvm_method_name_cstring.as_ptr(),
                 jvm_method_signature_cstring.as_ptr()
-            )
-        };
+            );
 
-        unsafe {
-            // Print any JVM exception.
-            print_jvm_exception(self.jni_environment);
-        }
+        // Print any JVM exception.
+        print_jvm_exception(self.jni_environment);
 
         if jvm_method_ptr.is_null() {
             return None;
@@ -264,24 +253,21 @@ impl Jvm {
     }
 
     /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
-    pub fn get_static_method(
+    pub unsafe fn get_static_method(
         &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
-        let jvm_method_ptr = unsafe {
+        let jvm_method_ptr =
             (**self.jni_environment).GetStaticMethodID.unwrap()(
                 self.jni_environment, *jvm_class.jvm_class_ptr(), jvm_method_name_cstring.as_ptr(),
                 jvm_method_signature_cstring.as_ptr()
-            )
-        };
+            );
 
-        unsafe {
-            // Print any JVM exception.
-            print_jvm_exception(self.jni_environment);
-        }
+        // Print any JVM exception.
+        print_jvm_exception(self.jni_environment);
 
         if jvm_method_ptr.is_null() {
             return None;
