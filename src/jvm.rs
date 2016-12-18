@@ -55,15 +55,13 @@ unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
 impl Jvm {
 
-
     /// Instantiates the JVM and the JNI environment.
     ///
     /// # Arguments
     ///
     /// * `jvm_option_strings` - a list of JVM options.
     ///
-
-    // TODO: enable example. this currently crashs rustdoc
+    // TODO: enable example. this crashs rustdoc currently
     // # Example
     //
     // ```
