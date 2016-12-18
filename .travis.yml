@@ -1,12 +1,14 @@
+before_script:
+  - export RUST_BACKTRACE=1
 language: rust
+matrix:
+  allow_failures:
+    - rust: nightly
 rust:
   - stable
   - beta
   - nightly
-matrix:
-  allow_failures:
-    - rust: nightly
 os:
   - linux
-  # TODO: find out where libvm is on Travis.
+  # TODO: find out where `libjvm` is on Travis.
   #- osx

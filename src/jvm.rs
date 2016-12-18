@@ -30,17 +30,6 @@ pub fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
 }
 
 ///
-unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
-
-    // An exception occurred.
-    if !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() {
-
-        // Print the JVM exception.
-        (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
-    };
-}
-
-///
 unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
     // An exception occurred.
@@ -50,6 +39,17 @@ unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
         (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
 
         panic!("An exception occurred");
+    };
+}
+
+///
+unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
+
+    // An exception occurred.
+    if !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() {
+
+        // Print the JVM exception.
+        (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
     };
 }
 
