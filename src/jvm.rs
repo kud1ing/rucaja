@@ -9,16 +9,6 @@ use std::ptr;
 use std::os::raw::c_void;
 
 
-/// Represents the JVM and the JNI environment.
-pub struct Jvm {
-
-    /// The JVM.
-    jvm: *mut JavaVM,
-
-    /// The JNI environment.
-    jni_environment: *mut JNIEnv,
-}
-
 /// Wraps a `jboolean` in a `jvalue`.
 pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
 
@@ -99,6 +89,18 @@ pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
 
     jvalue
 }
+
+
+/// Represents the JVM and the JNI environment.
+pub struct Jvm {
+
+    /// The JVM.
+    jvm: *mut JavaVM,
+
+    /// The JNI environment.
+    jni_environment: *mut JNIEnv,
+}
+
 
 ///
 unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
