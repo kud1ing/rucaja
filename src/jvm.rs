@@ -1,6 +1,6 @@
 use jni_sys::{
-    JavaVM, JavaVMInitArgs, JavaVMOption, jboolean, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv,
-    jobject, jvalue
+    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_FALSE, JNI_VERSION_1_8, JNIEnv,
+    jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
@@ -19,7 +19,7 @@ pub struct Jvm {
     jni_environment: *mut JNIEnv,
 }
 
-/// Wrapps a `jboolean` in a `jvalue`.
+/// Wraps a `jboolean` in a `jvalue`.
 pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
 
     let mut jvalue = jvalue::default();
@@ -28,11 +28,74 @@ pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
     jvalue
 }
 
-/// Wrapps a `jobject` in a `jvalue`.
+/// Wraps a `jbyte` in a `jvalue`.
+pub unsafe fn jvalue_from_jbyte(arg: jbyte) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.b() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jchar` in a `jvalue`.
+pub unsafe fn jvalue_from_jchar(arg: jchar) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.c() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jdouble` in a `jvalue`.
+pub unsafe fn jvalue_from_jdouble(arg: jdouble) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.d() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jint` in a `jvalue`.
+pub unsafe fn jvalue_from_jint(arg: jint) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.i() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jfloat` in a `jvalue`.
+pub unsafe fn jvalue_from_jfloat(arg: jfloat) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.f() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jlong` in a `jvalue`.
+pub unsafe fn jvalue_from_jlong(arg: jlong) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.j() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jobject` in a `jvalue`.
 pub unsafe fn jvalue_from_jobject(arg: jobject) -> jvalue {
 
     let mut jvalue = jvalue::default();
     *jvalue.l() = arg;
+
+    jvalue
+}
+
+/// Wraps a `jshort` in a `jvalue`.
+pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
+
+    let mut jvalue = jvalue::default();
+    *jvalue.s() = arg;
 
     jvalue
 }
