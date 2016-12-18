@@ -1,4 +1,4 @@
-use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
+use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jboolean, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
@@ -90,27 +90,26 @@ impl Jvm {
         jvm
     }
 
-    // TODO: call_object_method()
-
     // TODO: call_boolean_method()
 
     // TODO: call_byte_method()
 
     // TODO: call_char_method()
 
-    // TODO: call_short_method()
+    // TODO: call_double_method()
+
+    // TODO: call_float_method()
 
     // TODO: call_int_method()
 
     // TODO: call_long_method()
 
-    // TODO: call_float_method()
+    // TODO: call_object_method()
 
-    // TODO: call_double_method()
+    // TODO: call_short_method()
 
     // TODO: call_void_method()
 
-    // TODO: call_nonvirtual_object_method()
 
     // TODO: call_nonvirtual_boolean_method()
 
@@ -118,19 +117,37 @@ impl Jvm {
 
     // TODO: call_nonvirtual_char_method()
 
-    // TODO: call_nonvirtual_short_method()
+    // TODO: call_nonvirtual_double_method()
+
+    // TODO: call_nonvirtual_float_method()
 
     // TODO: call_nonvirtual_int_method()
 
     // TODO: call_nonvirtual_long_method()
 
-    // TODO: call_nonvirtual_float_method()
+    // TODO: call_nonvirtual_object_method()
 
-    // TODO: call_nonvirtual_double_method()
+    // TODO: call_nonvirtual_short_method()
 
     // TODO: call_nonvirtual_void_method()
 
+
+
     // TODO: call_static_boolean_method()
+
+    /// Tries to call the given JVM static boolean method in the given JVM class.
+    /// Currently panics if a JVM exception occurs.
+    pub fn call_static_boolean_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) -> jboolean {
+        unsafe {
+            let result : jboolean =  (**self.jni_environment).CallStaticBooleanMethod.unwrap()(
+                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr()
+            );
+
+            print_and_panic_on_jvm_exception(self.jni_environment);
+
+            result
+        }
+    }
 
     // TODO: call_static_byte_method()
 
@@ -146,7 +163,7 @@ impl Jvm {
 
     // TODO: call_static_object_method()
 
-    /// Tries to call the given JVM static method in the given JVM class.
+    /// Tries to call the given JVM static void method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
     pub fn call_static_void_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) {
         unsafe {

@@ -1,5 +1,14 @@
+/*
+ You can see the function signatures using:
+
+ `javap -s Test.class`
+ */
 class Test {
-    public static boolean staticBooleanMethod() {
+
+    public static boolean staticBooleanMethodFalse() {
+        return false;
+    }
+    public static boolean staticBooleanMethodTrue() {
         return true;
     }
 
