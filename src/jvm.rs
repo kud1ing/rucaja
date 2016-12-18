@@ -66,7 +66,9 @@ impl Jvm {
     ///
     /// ```
     /// use rucaja::Jvm;
-    /// let jvm = Jvm::new(&["-Xcheck:jni"]);
+    /// unsafe {
+    ///   let jvm = Jvm::new(&["-Xcheck:jni"]);
+    /// }
     /// ```
     pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
 
