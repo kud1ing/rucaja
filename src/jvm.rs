@@ -1,6 +1,6 @@
 use jni_sys::{
     JavaVM, JavaVMInitArgs, JavaVMOption, jboolean, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv,
-    jvalue
+    jobject, jvalue
 };
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
@@ -164,7 +164,7 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) -> jboolean {
 
-        let result : jboolean =  (**self.jni_environment).CallStaticBooleanMethodA.unwrap()(
+        let result = (**self.jni_environment).CallStaticBooleanMethodA.unwrap()(
             self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
         );
 
@@ -186,6 +186,18 @@ impl Jvm {
     // TODO: call_static_long_method()
 
     // TODO: call_static_object_method()
+    pub unsafe fn call_static_object_method(
+        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
+    ) -> jobject {
+
+        let result = (**self.jni_environment).CallStaticObjectMethodA.unwrap()(
+            self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
+        );
+
+        print_and_panic_on_jvm_exception(self.jni_environment);
+
+        result
+    }
 
     /// Tries to call the given JVM static void method in the given JVM class.
     /// Currently panics if a JVM exception occurs.

@@ -29,6 +29,12 @@ fn main() {
         let result = jvm.call_static_boolean_method(&jvm_class, &jvm_method, args.as_ptr());
         println!("`call_static_boolean_method()`; {:?}", result);
 
+        // Static object method.
+
+        let jvm_method = jvm.get_static_method(&jvm_class, "staticObjectMethod", "()Ljava/lang/String;").expect("Could not find JVM method");
+        let result = jvm.call_static_object_method(&jvm_class, &jvm_method, null());
+        println!("`call_static_object_method(): {:?}`", result);
+
         // Static void method.
 
         let jvm_method = jvm.get_static_method(&jvm_class, "staticVoidMethod", "()V").expect("Could not find JVM method");
