@@ -7,7 +7,7 @@ mod jvm_class;
 mod jvm_method;
 mod jvm_object;
 
-pub use jvm::Jvm;
+pub use jvm::{jvalue_from_jboolean, Jvm};
 pub use jvm_class::JvmClass;
 pub use jvm_method::JvmMethod;
 pub use jvm_object::JvmObject;

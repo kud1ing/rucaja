@@ -19,6 +19,16 @@ pub struct Jvm {
     jni_environment: *mut JNIEnv,
 }
 
+/// Wrapps a `jboolean` in a `jvalue`.
+pub fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
+    unsafe {
+        let mut jvalue = jvalue::default();
+        *jvalue.z() = arg;
+
+        jvalue
+    }
+}
+
 
 ///
 unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
@@ -35,6 +45,7 @@ unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
 
 impl Jvm {
+
 
     /// Instantiates the JVM and the JNI environment.
     ///

@@ -5,11 +5,8 @@
  */
 class Test {
 
-    public static boolean staticBooleanMethodFalse() {
-        return false;
-    }
-    public static boolean staticBooleanMethodTrue() {
-        return true;
+    public static boolean staticBooleanMethod(boolean arg) {
+        return !arg;
     }
 
     public static byte staticByteMethod() {
