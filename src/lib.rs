@@ -2,6 +2,7 @@ extern crate jni_sys;
 
 /// This crate allows to call Java code from Rust via JNI.
 
+mod java;
 mod jvm;
 mod jvm_class;
 mod jvm_method;

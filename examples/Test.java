@@ -5,6 +5,13 @@
  */
 class Test {
 
+    public static void main(String [] args) {
+    }
+
+    public static void println(Object object) {
+        System.out.println(object);
+    }
+
     public static boolean staticBooleanMethod(boolean arg) {
         return !arg;
     }
@@ -39,8 +46,5 @@ class Test {
 
     public static void staticVoidMethod() {
         System.out.println(":)");
-    }
-
-    public static void main(String [] args) {
     }
 }

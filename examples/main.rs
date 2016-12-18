@@ -27,6 +27,10 @@ fn call_static_object_method(jvm: &Jvm, jvm_class: &JvmClass) {
         let jvm_method = jvm.get_static_method(&jvm_class, "staticObjectMethod", "()Ljava/lang/String;").expect("Could not find JVM method");
         let result = jvm.call_static_object_method(&jvm_class, &jvm_method, null());
         println!("`call_static_object_method(): {:?}`", result);
+
+        // Print the object.
+        //let args = vec![result];
+        //jvm.call_static_void_method(&jvm_class, &jvm_println_method, args.as_ptr());
     }
 }
 
@@ -50,6 +54,9 @@ fn main() {
     unsafe {
         let jvm = Jvm::new(&jvm_options);
         let jvm_class = jvm.get_class("Test").expect("Could not find JVM class");
+
+        let jvm_system_class = jvm.get_class("java/lang/System").expect("Could not find JVM class");
+        //let jvm_println_method = jvm.get_static_method(&jvm_class, "println", "()(Ljava/lang/Object;)V").expect("Could not find JVM method");
 
         call_static_boolean_method(&jvm, &jvm_class);
         call_static_object_method(&jvm, &jvm_class);
