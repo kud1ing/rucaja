@@ -314,3 +314,22 @@ extern {
     // TODO: use `JNI_CreateJavaVM()` from rust-jni-sys > 0.2.1:
     fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut c_void, args: *mut c_void) -> jint;
 }
+
+
+#[cfg(test)]
+mod tests {
+
+    use super::Jvm;
+
+    #[test]
+    fn test_drop() {
+
+        // TODO: This SIGSEGVs
+        for _ in 0..10 {
+            unsafe {
+                Jvm::new(&[]);
+            }
+        }
+    }
+
+}
