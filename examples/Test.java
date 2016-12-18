@@ -41,7 +41,7 @@ class Test {
     }
 
     public static void staticVoidMethod() {
-        System.out.println("staticVoidMethod()");
+        System.out.println(":)");
     }
 
     public static void main(String [] args) {

@@ -1,4 +1,7 @@
-use jni_sys::{JavaVM, JavaVMInitArgs, JavaVMOption, jboolean, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv};
+use jni_sys::{
+    JavaVM, JavaVMInitArgs, JavaVMOption, jboolean, jint, JNI_FALSE, JNI_VERSION_1_8, JNIEnv,
+    jvalue
+};
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
@@ -137,10 +140,12 @@ impl Jvm {
 
     /// Tries to call the given JVM static boolean method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
-    pub fn call_static_boolean_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) -> jboolean {
+    pub fn call_static_boolean_method(
+        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
+    ) -> jboolean {
         unsafe {
-            let result : jboolean =  (**self.jni_environment).CallStaticBooleanMethod.unwrap()(
-                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr()
+            let result : jboolean =  (**self.jni_environment).CallStaticBooleanMethodA.unwrap()(
+                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
             );
 
             print_and_panic_on_jvm_exception(self.jni_environment);
@@ -165,10 +170,12 @@ impl Jvm {
 
     /// Tries to call the given JVM static void method in the given JVM class.
     /// Currently panics if a JVM exception occurs.
-    pub fn call_static_void_method(&self, jvm_class: &JvmClass, jvm_method: &JvmMethod) {
+    pub fn call_static_void_method(
+        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
+    ) {
         unsafe {
-            (**self.jni_environment).CallStaticVoidMethod.unwrap()(
-                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr()
+            (**self.jni_environment).CallStaticVoidMethodA.unwrap()(
+                self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
             );
 
             print_and_panic_on_jvm_exception(self.jni_environment);
@@ -206,7 +213,9 @@ impl Jvm {
     }
 
     /// Tries to resolve the JVM method with the given name and signature in the given JVM class.
-    pub fn get_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
+    pub fn get_method(
+        &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
+    ) -> Option<JvmMethod> {
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
@@ -226,7 +235,9 @@ impl Jvm {
     }
 
     /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
-    pub fn get_static_method(&self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str) -> Option<JvmMethod> {
+    pub fn get_static_method(
+        &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
+    ) -> Option<JvmMethod> {
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
