@@ -231,7 +231,6 @@ impl Jvm {
     }
 
     /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
-    #[inline(always)]
     pub fn get_constructor(&self, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
 
         self.get_method(jvm_class, "<init>", jvm_method_signature)
