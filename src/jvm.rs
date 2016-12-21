@@ -135,15 +135,14 @@ impl Jvm {
     ///
     /// * `jvm_option_strings` - a list of JVM options.
     ///
-    // TODO: enable example. this crashs rustdoc currently
-    // # Example
-    //
-    // ```
-    // use rucaja::Jvm;
-    // unsafe {
-    //   Jvm::new(&["-Xcheck:jni"]);
-    // }
-    // ```
+    /// # Example
+    ///
+    /// ```
+    /// use rucaja::Jvm;
+    /// unsafe {
+    ///   Jvm::new(&["-Xcheck:jni"]);
+    /// }
+    /// ```
     pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
 
         // Create the JVM structure.
@@ -376,8 +375,8 @@ impl Drop for Jvm {
     fn drop(&mut self) {
 
         unsafe {
-            // Destroy the JVM.
-            (**self.jvm).DestroyJavaVM.unwrap()(self.jvm);
+            // TODO: Destroy the JVM. This SIGSEGVs.
+            // (**self.jvm).DestroyJavaVM.unwrap()(self.jvm);
         }
     }
 }
@@ -395,8 +394,7 @@ mod tests {
 
     use super::Jvm;
 
-    // TODO: enable test when the SIGSEV is resolved.
-    //#[test]
+    #[test]
     fn test_drop() {
 
         // TODO: This SIGSEGVs. It goes away if we do not call `DestroyJavaVM()`
