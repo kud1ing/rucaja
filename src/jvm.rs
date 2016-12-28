@@ -1,5 +1,5 @@
 use jni_sys::{
-    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_FALSE, JNI_VERSION_1_8, JNIEnv,
+    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv,
     jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
 use jvm_class::JvmClass;
@@ -177,11 +177,15 @@ impl Jvm {
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
         // Create the JVM.
-        let _ = JNI_CreateJavaVM(
+        let result = JNI_CreateJavaVM(
             &mut jvm.jvm,
             (&mut jvm.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
             (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
         );
+
+        if result != JNI_OK {
+            println!("`JNI_CreateJavaVM` gave result {}", result);
+        }
 
         jvm
     }
