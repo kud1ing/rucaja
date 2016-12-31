@@ -40,11 +40,11 @@ class Test {
         return 42L;
     }
 
-    public static String static_object_method() {
-
-        // The simpler `return "Foo";` leads to a `java.security.AccessControlContext@0`.
-
+    public static String static_string_method() {
         return new String("Foo");
+    }
+    public static String static_string_interned_method() {
+        return "Foo";
     }
 
     public static void static_void_method() {

@@ -23,15 +23,20 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
 fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
-    unsafe {
-        let jvm_method = jvm.get_static_method(&class, "static_object_method", "()Ljava/lang/String;").expect("Could not find JVM method");
+    // There is difference when a method returns an interned `String`.
+    let jvm_method_names = ["static_string_method", "static_string_interned_method"];
 
-        let result = jvm.call_static_object_method(&class, &jvm_method, null());
-        println!("`call_static_object_method(): {:?}`", result);
+    for jvm_method_name in &jvm_method_names {
+        unsafe {
+            let jvm_method = jvm.get_static_method(&class, jvm_method_name, "()Ljava/lang/String;").expect("Could not find JVM method");
 
-        println!("Print the JVM object:");
-        let args = vec![jvalue_from_jobject(result)];
-        jvm.call_static_void_method(&class, &println, args.as_ptr());
+            let result = jvm.call_static_object_method(&class, &jvm_method, null());
+            println!("`call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
+
+            println!("Print the JVM object:");
+            let args = vec![jvalue_from_jobject(result)];
+            jvm.call_static_void_method(&class, &println, args.as_ptr());
+        }
     }
 }
 
