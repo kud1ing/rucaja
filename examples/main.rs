@@ -28,7 +28,8 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         let result = jvm.call_static_object_method(&class, &jvm_method, null());
         println!("`call_static_object_method(): {:?}`", result);
 
-        // Print the JVM object.
+        println!("Print the JVM object:");
+        // TODO this gives `java.security.AccessControlContext@0`
         let args = vec![jvalue_from_jobject(result)];
         jvm.call_static_void_method(&class, &println, args.as_ptr());
     }
