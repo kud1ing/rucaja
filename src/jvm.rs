@@ -193,12 +193,12 @@ impl Jvm {
         if result != JNI_OK {
 
             let error_message = match result {
-                JNI_ERR => "unknown error",
                 JNI_EDETACHED => "thread detached from JVM",
-                JNI_EVERSION => "JNI version error",
-                JNI_ENOMEM => "not enough memory",
                 JNI_EEXIST => "JVM exists already",
                 JNI_EINVAL => "invalid arguments",
+                JNI_ENOMEM => "not enough memory",
+                JNI_ERR => "unknown error",
+                JNI_EVERSION => "JNI version error",
                 _ => "unknown JNI error value",
             };
 
