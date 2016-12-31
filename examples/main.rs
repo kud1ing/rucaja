@@ -33,7 +33,7 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
             let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
 
             // Print the result of the Java call.
-            println!("`call_static_boolean_method({})`; {:?}", jvm_method_argument, result);
+            println!("* `call_static_boolean_method({})`; {:?}", jvm_method_argument, result);
         }
     }
 }
@@ -62,10 +62,10 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
                 // Call the Java method.
                 let result = jvm.call_static_object_method(&class, &jvm_method, null());
-                println!("`call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
+                println!("* `call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
 
                 // Print the Java result object via a Java method.
-                println!("Print the JVM object:");
+                println!("** print the JVM object:");
                 let args = vec![jvalue_from_jobject(result)];
                 jvm.call_static_void_method(&class, &println, args.as_ptr());
             }
@@ -85,7 +85,24 @@ fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
         ).expect("Could not find JVM method");
 
         jvm.call_static_void_method(&class, &jvm_method, null());
-        println!("`call_static_void_method()`");
+        println!("* `call_static_void_method()`");
+    }
+}
+
+/// Creates a Java string.
+fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
+
+    unsafe {
+        println!("* `create_a_java_string()`");
+
+        // Create a Java method.
+        let java_string = jvm.new_jstring("Hello World");
+
+        // Print the Java string via a Java method.
+        println!("** print the JVM string:");
+        let args = vec![jvalue_from_jobject(java_string)];
+        jvm.call_static_void_method(&class, &println, args.as_ptr());
+
     }
 }
 
@@ -111,6 +128,8 @@ fn main() {
             "println",
             "(Ljava/lang/Object;)V"
         ).expect("Could not find JVM method");
+
+        create_a_java_string(&jvm, &class, &println);
 
         // Call some Java methods.
         call_static_boolean_method(&jvm, &class);

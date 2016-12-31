@@ -158,11 +158,6 @@ impl Jvm {
     /// ```
     pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
 
-        // Initialize the JVM structure.
-        let mut jvm = Jvm {
-            jvm: ptr::null_mut(),
-        };
-
         // Wrap the JVM option string slices in a vector of `CString`s.
         let mut jvm_option_cstrings : Vec<CString> = Vec::new();
 
@@ -189,11 +184,12 @@ impl Jvm {
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
         // Initialize space for a pointer to the JNI environment.
+        let mut jvm: *mut JavaVM = ptr::null_mut();
         let mut jni_environment : *mut JNIEnv = ptr::null_mut();
 
         // Try to instantiate the JVM.
         let result = JNI_CreateJavaVM(
-            &mut jvm.jvm,
+            &mut jvm,
             (&mut jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
             (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
         );
@@ -215,7 +211,9 @@ impl Jvm {
             panic!("`JNI_CreateJavaVM()` signaled an error: {}", error_message);
         }
 
-        jvm
+        Jvm {
+            jvm: jvm,
+        }
     }
 
     // TODO: call_boolean_method()
@@ -431,6 +429,9 @@ impl Jvm {
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let string_as_cstring = CString::new(string).unwrap();
+
+        // TODO: call the constructor on "java/lang/String" instread because `NewStringUTF()`
+        // creates interned strings.
 
         let result = (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
             jvm_attachment.jni_environment(),
