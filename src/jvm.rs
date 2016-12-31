@@ -107,6 +107,7 @@ unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
         // Print the JVM exception.
         (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
 
+        // Panic.
         panic!("An exception occurred");
     };
 }
@@ -349,13 +350,8 @@ impl Jvm {
                 jvm_class_name_cstring.as_ptr()
             );
 
-        // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
-        // A JVM exception occurred.
-        if jvm_exception_occured(jvm_attachment.jni_environment()) {
-
-            // Only print the JVM exception.
-            print_jvm_exception(jvm_attachment.jni_environment());
-        };
+        // Print any JVM exception.
+        print_jvm_exception(jvm_attachment.jni_environment());
 
         if jvm_class_ptr.is_null() {
             return None;
