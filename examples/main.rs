@@ -44,8 +44,6 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
     // The names of Java methods to call.
     let jvm_method_names = [
         "static_method_that_returns_a_string",
-
-        // An attempted access to an interned `String` gives `java.security.AccessControlContext@0`.
         "static_method_that_returns_an_interned_string"
     ];
 
@@ -95,8 +93,9 @@ fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
     unsafe {
         println!("* `create_a_java_string()`");
 
-        // Create a Java method.
-        let java_string = jvm.new_jstring_interned("Hello World");
+        // Get the Java method.
+        let java_string = jvm.new_jstring("Hello World");
+        //let java_string = jvm.new_jstring_interned("Hello World");
 
         // Print the Java string via a Java method.
         println!("** print the JVM string:");
