@@ -10,6 +10,7 @@ use std::ffi::CString;
 use std::ptr;
 use std::os::raw::c_void;
 
+// =================================================================================================
 
 /// Wraps a `jboolean` in a `jvalue`.
 pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
@@ -92,20 +93,16 @@ pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
     jvalue
 }
 
-
-/// Holds a reference to the JVM.
-pub struct Jvm {
-
-    /// The JVM.
-    jvm: *mut JavaVM,
+///
+unsafe fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
+    return !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null()
 }
-
 
 ///
 unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
-    // An exception occurred.
-    if !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() {
+    // A JVM exception occurred.
+    if jvm_exception_occured(jni_environment) {
 
         // Print the JVM exception.
         (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
@@ -117,14 +114,22 @@ unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 ///
 unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
-    // An exception occurred.
-    if !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() {
+    // A JVM exception occurred.
+    if jvm_exception_occured(jni_environment) {
 
         // Print the JVM exception.
         (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
     };
 }
 
+// =================================================================================================
+
+/// Holds a reference to the embedded JVM.
+pub struct Jvm {
+
+    /// The JVM.
+    jvm: *mut JavaVM,
+}
 
 impl Jvm {
 
@@ -133,7 +138,7 @@ impl Jvm {
         self.jvm
     }
 
-    /// Tries to instantiate the JVM.
+    /// Tries to instantiate the embedded JVM.
     ///
     /// The JNI does not allow the creation of multiple JVMs in the same process (it seems, not even
     /// sequentially). An attempt will result in a `panic`.
@@ -345,7 +350,8 @@ impl Jvm {
             );
 
         // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
-        if !(**jvm_attachment.jni_environment()).ExceptionOccurred.unwrap()(jvm_attachment.jni_environment()).is_null() {
+        // A JVM exception occurred.
+        if jvm_exception_occured(jvm_attachment.jni_environment()) {
 
             // Only print the JVM exception.
             print_jvm_exception(jvm_attachment.jni_environment());
@@ -423,6 +429,7 @@ impl Jvm {
     }
 }
 
+// =================================================================================================
 
 impl Drop for Jvm {
 
@@ -433,6 +440,8 @@ impl Drop for Jvm {
         // `DestroyJavaVM()` led to `SIGSEV`s with Java 8, though.
     }
 }
+
+// =================================================================================================
 
 
 #[link(name="jvm")]
@@ -446,3 +455,5 @@ extern {
 mod tests {
 
 }
+
+// =================================================================================================
