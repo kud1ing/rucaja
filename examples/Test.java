@@ -12,39 +12,42 @@ class Test {
         System.out.println(object);
     }
 
-    public static boolean staticBooleanMethod(boolean arg) {
+    public static boolean static_boolean_method(boolean arg) {
         return !arg;
     }
 
-    public static byte staticByteMethod() {
+    public static byte static_byte_method() {
         return 42;
     }
 
-    public static char staticCharMethod() {
+    public static char static_char_method() {
         return 'a';
     }
 
-    public static double staticDoubleMethod() {
+    public static double static_double_method() {
         return 42.0f;
     }
 
-    public static float staticFloatMethod() {
+    public static float static_float_method() {
         return 42.0f;
     }
 
-    public static int staticIntMethod() {
+    public static int static_int_method() {
         return 42;
     }
 
-    public static long staticLongMethod() {
+    public static long static_long_method() {
         return 42L;
     }
 
-    public static String staticObjectMethod() {
-        return "Foo";
+    public static String static_object_method() {
+
+        // The simpler `return "Foo";` leads to a `java.security.AccessControlContext@0`.
+
+        return new String("Foo");
     }
 
-    public static void staticVoidMethod() {
+    public static void static_void_method() {
         System.out.println(":)");
     }
 }
