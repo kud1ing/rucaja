@@ -1,6 +1,7 @@
 use jni_sys::{
-    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv,
-    jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
+    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_ERR, JNI_EDETACHED, JNI_EVERSION, JNI_ENOMEM,
+    JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte, jchar,
+    jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
@@ -184,7 +185,18 @@ impl Jvm {
         );
 
         if result != JNI_OK {
-            println!("`JNI_CreateJavaVM` gave result {}", result);
+
+            let error_message = match result {
+                JNI_ERR => "unknown error",
+                JNI_EDETACHED => "thread detached from JVM",
+                JNI_EVERSION => "JNI version error",
+                JNI_ENOMEM => "not enough memory",
+                JNI_EEXIST => "JVM exists already",
+                JNI_EINVAL => "invalid arguments",
+                _ => "unknown JNI error value",
+            };
+
+            panic!("`JNI_CreateJavaVM()` signaled an error: {}", error_message);
         }
 
         jvm
@@ -378,10 +390,10 @@ impl Drop for Jvm {
 
     fn drop(&mut self) {
 
-        unsafe {
-            // TODO: Destroy the JVM. This SIGSEGVs.
-            // (**self.jvm).DestroyJavaVM.unwrap()(self.jvm);
-        }
+        // TODO: Destroy the JVM. This SIGSEGVs.
+        /*unsafe {
+            (**self.jvm).DestroyJavaVM.unwrap()(self.jvm);
+        }*/
     }
 }
 
@@ -396,8 +408,9 @@ extern {
 #[cfg(test)]
 mod tests {
 
-    use super::Jvm;
-
+    // TODO: Find out whether the JNI allows to create and tear down the JVM multiple times in the
+    // same process.
+    /*
     #[test]
     fn test_drop() {
 
@@ -407,5 +420,5 @@ mod tests {
             }
         }
     }
-
+    */
 }
