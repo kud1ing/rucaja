@@ -5,6 +5,7 @@ use std::os::raw::c_void;
 // =================================================================================================
 
 /// A native thread's attachment to a JVM.
+/// Detachment is provided via RAII.
 pub struct JvmAttachment {
 
     /// The JNI environment.
@@ -18,7 +19,7 @@ pub struct JvmAttachment {
 impl JvmAttachment {
 
     ///
-    unsafe fn new(jvm: *mut JavaVM) -> JvmAttachment {
+    pub unsafe fn new(jvm: *mut JavaVM) -> JvmAttachment {
 
         let mut jvm_attachment = JvmAttachment {
             jni_environment: ptr::null_mut(),
@@ -26,13 +27,20 @@ impl JvmAttachment {
         };
 
         // Try to attach the current native thread to the JVM.
-        let result = (**jvm).AttachCurrentThread.unwrap()(
+        let _ = (**jvm).AttachCurrentThread.unwrap()(
             jvm,
             (&mut jvm_attachment.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
             ptr::null_mut(),
         );
 
+        // TODO: interpret the result
+
         jvm_attachment
+    }
+
+    ///
+    pub fn jni_environment(&self) -> *mut JNIEnv {
+        self.jni_environment
     }
 }
 
@@ -44,9 +52,11 @@ impl Drop for JvmAttachment {
 
         unsafe {
             // Try to detach the current native thread from the JVM.
-            let result = (**self.jvm).DetachCurrentThread.unwrap()(
+            let _ = (**self.jvm).DetachCurrentThread.unwrap()(
                 self.jvm,
             );
+
+            // TODO: interpret the result
         }
     }
 }

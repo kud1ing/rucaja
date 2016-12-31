@@ -93,14 +93,11 @@ pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
 }
 
 
-/// Represents the JVM and the JNI environment.
+/// Holds a reference to the JVM.
 pub struct Jvm {
 
     /// The JVM.
     jvm: *mut JavaVM,
-
-    /// The JNI environment.
-    jni_environment: *mut JNIEnv,
 }
 
 
@@ -131,6 +128,11 @@ unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
 impl Jvm {
 
+    ///
+    pub fn jvm(&self) -> *mut JavaVM {
+        self.jvm
+    }
+
     /// Instantiates the JVM.
     /// The JNI does not allow the creation of multiple JVMs in the same process.
     ///
@@ -151,8 +153,9 @@ impl Jvm {
         // Create the JVM structure.
         let mut jvm = Jvm {
             jvm: ptr::null_mut(),
-            jni_environment: ptr::null_mut(),
         };
+
+        let mut jni_environment : *mut JNIEnv = ptr::null_mut();
 
         // Wrap the JVM option string slices in a vector of `CString`s.
         let mut jvm_option_cstrings : Vec<CString> = Vec::new();
@@ -182,7 +185,7 @@ impl Jvm {
         // Try to create the JVM.
         let result = JNI_CreateJavaVM(
             &mut jvm.jvm,
-            (&mut jvm.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
+            (&mut jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
             (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
         );
 
@@ -256,11 +259,16 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) -> jboolean {
 
-        let result = (**self.jni_environment).CallStaticBooleanMethodA.unwrap()(
-            self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
+        let result = (**jvm_attachment.jni_environment()).CallStaticBooleanMethodA.unwrap()(
+            jvm_attachment.jni_environment(),
+            *jvm_class.jvm_class_ptr(),
+            *jvm_method.jvm_method_ptr(),
+            args
         );
 
-        print_and_panic_on_jvm_exception(self.jni_environment);
+        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
 
         result
     }
@@ -282,11 +290,16 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) -> jobject {
 
-        let result = (**self.jni_environment).CallStaticObjectMethodA.unwrap()(
-            self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
+        let result = (**jvm_attachment.jni_environment()).CallStaticObjectMethodA.unwrap()(
+            jvm_attachment.jni_environment(),
+            *jvm_class.jvm_class_ptr(),
+            *jvm_method.jvm_method_ptr(),
+            args
         );
 
-        print_and_panic_on_jvm_exception(self.jni_environment);
+        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
 
         result
     }
@@ -296,29 +309,38 @@ impl Jvm {
     pub unsafe fn call_static_void_method(
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) {
-        (**self.jni_environment).CallStaticVoidMethodA.unwrap()(
-            self.jni_environment, *jvm_class.jvm_class_ptr(), *jvm_method.jvm_method_ptr(), args
+
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
+        (**jvm_attachment.jni_environment()).CallStaticVoidMethodA.unwrap()(
+            jvm_attachment.jni_environment(),
+            *jvm_class.jvm_class_ptr(),
+            *jvm_method.jvm_method_ptr(),
+            args
         );
 
-        print_and_panic_on_jvm_exception(self.jni_environment);
+        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
 
     }
 
     /// Tries to resolve the JVM class with the given name.
     pub unsafe fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
 
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
         let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
 
         let jvm_class_ptr =
-            (**self.jni_environment).FindClass.unwrap()(
-                self.jni_environment, jvm_class_name_cstring.as_ptr()
+            (**jvm_attachment.jni_environment()).FindClass.unwrap()(
+                jvm_attachment.jni_environment(),
+                jvm_class_name_cstring.as_ptr()
             );
 
         // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
-        if !(**self.jni_environment).ExceptionOccurred.unwrap()(self.jni_environment).is_null() {
+        if !(**jvm_attachment.jni_environment()).ExceptionOccurred.unwrap()(jvm_attachment.jni_environment()).is_null() {
 
             // Print any JVM exception.
-            print_jvm_exception(self.jni_environment);
+            print_jvm_exception(jvm_attachment.jni_environment());
         };
 
         if jvm_class_ptr.is_null() {
@@ -339,17 +361,21 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
         let jvm_method_ptr =
-            (**self.jni_environment).GetMethodID.unwrap()(
-                self.jni_environment, *jvm_class.jvm_class_ptr(), jvm_method_name_cstring.as_ptr(),
+            (**jvm_attachment.jni_environment()).GetMethodID.unwrap()(
+                jvm_attachment.jni_environment(),
+                *jvm_class.jvm_class_ptr(),
+                jvm_method_name_cstring.as_ptr(),
                 jvm_method_signature_cstring.as_ptr()
             );
 
         // Print any JVM exception.
-        print_jvm_exception(self.jni_environment);
+        print_jvm_exception(jvm_attachment.jni_environment());
 
         if jvm_method_ptr.is_null() {
             return None;
@@ -363,28 +389,27 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
         let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
 
         let jvm_method_ptr =
-            (**self.jni_environment).GetStaticMethodID.unwrap()(
-                self.jni_environment, *jvm_class.jvm_class_ptr(), jvm_method_name_cstring.as_ptr(),
+            (**jvm_attachment.jni_environment()).GetStaticMethodID.unwrap()(
+                jvm_attachment.jni_environment(),
+                *jvm_class.jvm_class_ptr(),
+                jvm_method_name_cstring.as_ptr(),
                 jvm_method_signature_cstring.as_ptr()
             );
 
         // Print any JVM exception.
-        print_jvm_exception(self.jni_environment);
+        print_jvm_exception(jvm_attachment.jni_environment());
 
         if jvm_method_ptr.is_null() {
             return None;
         }
 
         JvmMethod::new(jvm_method_ptr)
-    }
-
-    /// Returns the JNI environment.
-    pub fn jni_environment(&self) -> *mut JNIEnv {
-        self.jni_environment
     }
 }
 

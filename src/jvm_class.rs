@@ -1,5 +1,6 @@
 use jni_sys::jclass;
 use jvm::Jvm;
+use jvm_attachment::JvmAttachment;
 
 
 /// Represents a class in the JVM.
@@ -27,7 +28,8 @@ impl<'a> JvmClass<'a> {
 
         // Create a global JVM reference to the given JVM class object, to prevent GC claiming it.
         let jvm_class_ptr_global = unsafe {
-            (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_class_ptr)
+            let jvm_attachment = JvmAttachment::new(jvm.jvm());
+            (**jvm_attachment.jni_environment()).NewGlobalRef.unwrap()(jvm_attachment.jni_environment(), jvm_class_ptr)
         };
 
         if jvm_class_ptr_global.is_null() {
@@ -49,8 +51,10 @@ impl<'a> Drop for JvmClass<'a> {
 
         // Delete the global JVM reference to the JVM class object.
         unsafe {
-            (**self.jvm.jni_environment()).DeleteGlobalRef.unwrap()(
-                self.jvm.jni_environment(),
+            let jvm_attachment = JvmAttachment::new(self.jvm.jvm());
+
+            (**jvm_attachment.jni_environment()).DeleteGlobalRef.unwrap()(
+                jvm_attachment.jni_environment(),
                 self.jvm_class_ptr
             );
         }

@@ -1,5 +1,6 @@
 use jni_sys::jobject;
 use jvm::Jvm;
+use jvm_attachment::JvmAttachment;
 
 
 /// Represents an object in the JVM.
@@ -27,7 +28,8 @@ impl<'a> JvmObject<'a> {
 
         // Create a global JVM reference to the given JVM object, to prevent GC claiming it.
         let jvm_object_ptr_global = unsafe {
-            (**jvm.jni_environment()).NewGlobalRef.unwrap()(jvm.jni_environment(), jvm_object_ptr)
+            let jvm_attachment = JvmAttachment::new(jvm.jvm());
+            (**jvm_attachment.jni_environment()).NewGlobalRef.unwrap()(jvm_attachment.jni_environment(), jvm_object_ptr)
         };
 
         if jvm_object_ptr_global.is_null() {
@@ -49,8 +51,10 @@ impl<'a> Drop for JvmObject<'a> {
 
         // Delete the global JVM reference to the JVM object.
         unsafe {
-            (**self.jvm.jni_environment()).DeleteGlobalRef.unwrap()(
-                self.jvm.jni_environment(), self.jvm_object_ptr
+            let jvm_attachment = JvmAttachment::new(self.jvm.jvm());
+
+            (**jvm_attachment.jni_environment()).DeleteGlobalRef.unwrap()(
+                jvm_attachment.jni_environment(), self.jvm_object_ptr
             );
         }
     }
