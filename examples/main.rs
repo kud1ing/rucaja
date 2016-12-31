@@ -6,6 +6,7 @@ use rucaja::{jvalue_from_jboolean, jvalue_from_jobject, Jvm, JvmClass, JvmMethod
 use std::ptr::null;
 
 
+/// Calls a static Java method that returns a Java `bool`.
 fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
     let jvm_method_arguments = [
@@ -28,6 +29,7 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
     }
 }
 
+/// Calls static Java methods that return a Java object.
 fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
     let jvm_method_names = [
@@ -55,6 +57,7 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
     }
 }
 
+/// Calls a static void Java method.
 fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
@@ -70,6 +73,8 @@ fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
 }
 
 fn main() {
+
+    // JVM options.
     let jvm_options = [
         //"-verbose:gc",
         //"-verbose:jni",
@@ -77,15 +82,20 @@ fn main() {
     ];
 
     unsafe {
+        // Instantiate the embedded JVM.
         let jvm = Jvm::new(&jvm_options);
+
+        // Get the Java class `Test` from `Test.java`.
         let class = jvm.get_class("Test").expect("Could not find JVM class");
 
+        // Get `println()` Java wrapper method for debugging the JVM objects.
         let println = jvm.get_static_method(
             &class,
             "println",
             "(Ljava/lang/Object;)V"
         ).expect("Could not find JVM method");
 
+        // Call some Java methods.
         call_static_boolean_method(&jvm, &class);
         call_static_object_method(&jvm, &class, &println);
         call_static_void_method(&jvm, &class);

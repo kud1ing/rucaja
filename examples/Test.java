@@ -1,7 +1,11 @@
-/*
- You can see the function signatures using:
-
-    javap -s Test.class
+/**
+ * Compiling this file:
+ *
+ *     javac Test.java
+ *
+ * The Java method signatures can be seen using the Java command-line tool `javap`:
+ *
+ *     javap -s Test.class
  */
 class Test {
 
@@ -43,6 +47,7 @@ class Test {
     public static String static_method_that_returns_a_string() {
         return new String("Foo");
     }
+
     public static String static_method_that_returns_an_interned_string() {
         return "Foo";
     }
