@@ -9,7 +9,7 @@ links = "jvm"
 name = "rucaja"
 readme = "README.md"
 repository = "https://github.com/kud1ing/rucaja"
-version = "0.1.8"
+version = "0.1.9"
 
 [dependencies]
 jni-sys="0.2.1"

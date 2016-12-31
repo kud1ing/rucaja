@@ -8,6 +8,10 @@ mod jvm_class;
 mod jvm_method;
 mod jvm_object;
 
+pub use jni_sys::{
+    jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
+};
+
 pub use jvm::{
     jvalue_from_jboolean,
     jvalue_from_jbyte,
