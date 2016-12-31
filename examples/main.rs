@@ -9,21 +9,30 @@ use std::ptr::null;
 /// Calls a static Java method that returns a Java `bool`.
 fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
+    // The arguments for the Java methods.
     let jvm_method_arguments = [
         JNI_FALSE,
         JNI_TRUE,
     ];
 
     unsafe {
+
+        // Get the Java method.
         let jvm_method = jvm.get_static_method(
             &class,
             "static_method_that_returns_a_boolean",
             "(Z)Z"
         ).expect("Could not find JVM method");
 
+        // Iterate over the Java method arguments.
         for jvm_method_argument in &jvm_method_arguments {
+
             let args = vec![jvalue_from_jboolean(*jvm_method_argument)];
+
+            // Call the java method with the current argument.
             let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
+
+            // Print the result of the Java call.
             println!("`call_static_boolean_method({})`; {:?}", jvm_method_argument, result);
         }
     }
@@ -32,6 +41,7 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 /// Calls static Java methods that return a Java object.
 fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
+    // The names of Java methods to call.
     let jvm_method_names = [
         "static_method_that_returns_a_string",
 
@@ -39,21 +49,26 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         "static_method_that_returns_an_interned_string"
     ];
 
-    for jvm_method_name in &jvm_method_names {
-        unsafe {
-            let jvm_method = jvm.get_static_method(
-                &class,
-                jvm_method_name,
-                "()Ljava/lang/String;"
-            ).expect("Could not find JVM method");
+    unsafe {
+        // Iterate over the Java method names.
+        for jvm_method_name in &jvm_method_names {
 
-            let result = jvm.call_static_object_method(&class, &jvm_method, null());
-            println!("`call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
+                // Get the current Java method.
+                let jvm_method = jvm.get_static_method(
+                    &class,
+                    jvm_method_name,
+                    "()Ljava/lang/String;"
+                ).expect("Could not find JVM method");
 
-            println!("Print the JVM object:");
-            let args = vec![jvalue_from_jobject(result)];
-            jvm.call_static_void_method(&class, &println, args.as_ptr());
-        }
+                // Call the Java method.
+                let result = jvm.call_static_object_method(&class, &jvm_method, null());
+                println!("`call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
+
+                // Print the Java result object via a Java method.
+                println!("Print the JVM object:");
+                let args = vec![jvalue_from_jobject(result)];
+                jvm.call_static_void_method(&class, &println, args.as_ptr());
+            }
     }
 }
 
@@ -61,6 +76,8 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
+
+        // Get the Java method.
         let jvm_method = jvm.get_static_method(
             &class,
             "static_void_method",
@@ -88,7 +105,7 @@ fn main() {
         // Get the Java class `Test` from `Test.java`.
         let class = jvm.get_class("Test").expect("Could not find JVM class");
 
-        // Get `println()` Java wrapper method for debugging the JVM objects.
+        // Get the `println()` Java wrapper method for debugging the JVM objects.
         let println = jvm.get_static_method(
             &class,
             "println",
