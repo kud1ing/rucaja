@@ -130,7 +130,8 @@ unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
 impl Jvm {
 
-    /// Instantiates the JVM and the JNI environment.
+    /// Instantiates the JVM.
+    /// The JNI does not allow the creation of multiple JVMs in the same process.
     ///
     /// # Arguments
     ///
@@ -177,13 +178,14 @@ impl Jvm {
         jvm_arguments.nOptions = jvm_options.len() as i32;
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
-        // Create the JVM.
+        // Try to create the JVM.
         let result = JNI_CreateJavaVM(
             &mut jvm.jvm,
             (&mut jvm.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
             (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
         );
 
+        // There was an error while trying to create the JVM.
         if result != JNI_OK {
 
             let error_message = match result {
@@ -390,10 +392,9 @@ impl Drop for Jvm {
 
     fn drop(&mut self) {
 
-        // TODO: Destroy the JVM. This SIGSEGVs.
-        /*unsafe {
-            (**self.jvm).DestroyJavaVM.unwrap()(self.jvm);
-        }*/
+        // The Java 7 documentation states that VM unloading is not supported.
+        // The Java 8 documentation does not mention this restriction anymore. Calling
+        // `DestroyJavaVM()` led to `SIGSEV`s with Java 8, though.
     }
 }
 
@@ -408,17 +409,4 @@ extern {
 #[cfg(test)]
 mod tests {
 
-    // TODO: Find out whether the JNI allows to create and tear down the JVM multiple times in the
-    // same process.
-    /*
-    #[test]
-    fn test_drop() {
-
-        for _ in 0..10 {
-            unsafe {
-                Jvm::new(&[]);
-            }
-        }
-    }
-    */
 }
