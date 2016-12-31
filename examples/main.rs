@@ -23,16 +23,17 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
         for jvm_method_argument in &jvm_method_arguments {
             let args = vec![jvalue_from_jboolean(*jvm_method_argument)];
             let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
-            println!("`call_static_boolean_method()`; {:?}", result);
+            println!("`call_static_boolean_method({})`; {:?}", jvm_method_argument, result);
         }
     }
 }
 
 fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
-    // An attempted access to an interned `String` gives `java.security.AccessControlContext@0`.
     let jvm_method_names = [
         "static_method_that_returns_a_string",
+
+        // An attempted access to an interned `String` gives `java.security.AccessControlContext@0`.
         "static_method_that_returns_an_interned_string"
     ];
 
