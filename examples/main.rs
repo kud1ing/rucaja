@@ -8,23 +8,33 @@ use std::ptr::null;
 
 fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
-    unsafe {
-        let args = vec![jvalue_from_jboolean(JNI_FALSE)];
-        let jvm_method = jvm.get_static_method(&class, "static_boolean_method", "(Z)Z").expect("Could not find JVM method");
-        let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
-        println!("`call_static_boolean_method()`; {:?}", result);
+    let jvm_method_arguments = [
+        JNI_FALSE,
+        JNI_TRUE,
+    ];
 
-        let args = vec![jvalue_from_jboolean(JNI_TRUE)];
-        let jvm_method = jvm.get_static_method(&class, "static_boolean_method", "(Z)Z").expect("Could not find JVM method");
-        let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
-        println!("`call_static_boolean_method()`; {:?}", result);
+    unsafe {
+        let jvm_method = jvm.get_static_method(
+            &class,
+            "static_method_that_returns_a_boolean",
+            "(Z)Z"
+        ).expect("Could not find JVM method");
+
+        for jvm_method_argument in &jvm_method_arguments {
+            let args = vec![jvalue_from_jboolean(*jvm_method_argument)];
+            let result = jvm.call_static_boolean_method(&class, &jvm_method, args.as_ptr());
+            println!("`call_static_boolean_method()`; {:?}", result);
+        }
     }
 }
 
 fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
-    // There is difference when a method returns an interned `String`.
-    let jvm_method_names = ["static_string_method", "static_string_interned_method"];
+    // An attempted access to an interned `String` gives `java.security.AccessControlContext@0`.
+    let jvm_method_names = [
+        "static_method_that_returns_a_string",
+        "static_method_that_returns_an_interned_string"
+    ];
 
     for jvm_method_name in &jvm_method_names {
         unsafe {
@@ -48,7 +58,6 @@ fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
         println!("`call_static_void_method()`");
     }
 }
-
 
 fn main() {
     let jvm_options = [

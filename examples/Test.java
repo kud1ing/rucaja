@@ -12,38 +12,38 @@ class Test {
         System.out.println(object);
     }
 
-    public static boolean static_boolean_method(boolean arg) {
+    public static boolean static_method_that_returns_a_boolean(boolean arg) {
         return !arg;
     }
 
-    public static byte static_byte_method() {
+    public static byte static_method_that_returns_a_byte() {
         return 42;
     }
 
-    public static char static_char_method() {
+    public static char static_method_that_returns_a_char() {
         return 'a';
     }
 
-    public static double static_double_method() {
+    public static double static_method_that_returns_a_double() {
         return 42.0f;
     }
 
-    public static float static_float_method() {
+    public static float static_method_that_returns_a_float() {
         return 42.0f;
     }
 
-    public static int static_int_method() {
+    public static int static_method_that_returns_a_int() {
         return 42;
     }
 
-    public static long static_long_method() {
+    public static long static_method_that_returns_a_long() {
         return 42L;
     }
 
-    public static String static_string_method() {
+    public static String static_method_that_returns_a_string() {
         return new String("Foo");
     }
-    public static String static_string_interned_method() {
+    public static String static_method_that_returns_an_interned_string() {
         return "Foo";
     }
 
