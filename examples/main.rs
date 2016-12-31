@@ -26,7 +26,6 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
     unsafe {
         let jvm_method = jvm.get_static_method(&class, "static_object_method", "()Ljava/lang/String;").expect("Could not find JVM method");
 
-        // TODO this gives `java.security.AccessControlContext@0`
         let result = jvm.call_static_object_method(&class, &jvm_method, null());
         println!("`call_static_object_method(): {:?}`", result);
 
