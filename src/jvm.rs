@@ -3,6 +3,7 @@ use jni_sys::{
     JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte, jchar,
     jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
+use jvm_attachment::JvmAttachment;
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
 use std::ffi::CString;
