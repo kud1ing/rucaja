@@ -1,7 +1,7 @@
 use jni_sys::{
     JavaVM, JavaVMInitArgs, JavaVMOption, JNI_ERR, JNI_EDETACHED, JNI_EVERSION, JNI_ENOMEM,
     JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte, jchar,
-    jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
+    jint, jdouble, jfloat, jlong, jobject, jshort, jstring, jvalue
 };
 use jvm_attachment::JvmAttachment;
 use jvm_class::JvmClass;
@@ -422,6 +422,24 @@ impl Jvm {
         }
 
         JvmMethod::new(jvm_method_ptr)
+    }
+
+    /// Creates and returns a new `jstring`.
+    pub unsafe fn new_jstring(&self, string: &str) -> jstring {
+
+        // Attach the current native thread to the JVM.
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
+        let string_as_cstring = CString::new(string).unwrap();
+
+        let result = (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
+            jvm_attachment.jni_environment(),
+            string_as_cstring.as_ptr()
+        );
+
+        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
+
+        result
     }
 }
 
