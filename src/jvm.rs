@@ -422,16 +422,16 @@ impl Jvm {
         JvmMethod::new(jvm_method_ptr)
     }
 
-    /// Creates and returns a new `jstring`.
-    pub unsafe fn new_jstring(&self, string: &str) -> jstring {
+    /// Creates and returns a interned JVM string.
+    pub unsafe fn new_jstring_interned(&self, string: &str) -> jstring {
 
         // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let string_as_cstring = CString::new(string).unwrap();
 
-        // TODO: call the constructor on "java/lang/String" instread because `NewStringUTF()`
-        // creates interned strings.
+        // TODO: call the constructor on "java/lang/String" instead because `NewStringUTF()`
+        // creates interned strings which give `java.security.AccessControlContext`.
 
         let result = (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
             jvm_attachment.jni_environment(),
