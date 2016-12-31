@@ -133,12 +133,14 @@ impl Jvm {
         self.jvm
     }
 
-    /// Instantiates the JVM.
-    /// The JNI does not allow the creation of multiple JVMs in the same process.
+    /// Tries to instantiate the JVM.
+    ///
+    /// The JNI does not allow the creation of multiple JVMs in the same process (it seems, not even
+    /// sequentially). An attempt will result in a `panic`.
     ///
     /// # Arguments
     ///
-    /// * `jvm_option_strings` - a list of JVM options.
+    /// * `jvm_option_strings` - a list of JVM option strings.
     ///
     /// # Example
     ///
@@ -150,12 +152,10 @@ impl Jvm {
     /// ```
     pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
 
-        // Create the JVM structure.
+        // Initialize the JVM structure.
         let mut jvm = Jvm {
             jvm: ptr::null_mut(),
         };
-
-        let mut jni_environment : *mut JNIEnv = ptr::null_mut();
 
         // Wrap the JVM option string slices in a vector of `CString`s.
         let mut jvm_option_cstrings : Vec<CString> = Vec::new();
@@ -164,7 +164,7 @@ impl Jvm {
             jvm_option_cstrings.push(CString::new(*jvm_option_string).unwrap());
         }
 
-        // Create a vector of `JavaVMOption` each referencing a `CString`.
+        // Create a vector of `JavaVMOption`s, each referencing a `CString`.
         let mut jvm_options : Vec<JavaVMOption> = Vec::new();
 
         for jvm_option_cstring in &jvm_option_cstrings {
@@ -182,16 +182,20 @@ impl Jvm {
         jvm_arguments.nOptions = jvm_options.len() as i32;
         jvm_arguments.ignoreUnrecognized = JNI_FALSE;
 
-        // Try to create the JVM.
+        // Initialize space for a pointer to the JNI environment.
+        let mut jni_environment : *mut JNIEnv = ptr::null_mut();
+
+        // Try to instantiate the JVM.
         let result = JNI_CreateJavaVM(
             &mut jvm.jvm,
             (&mut jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
             (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
         );
 
-        // There was an error while trying to create the JVM.
+        // There was an error while trying to instantiate the JVM.
         if result != JNI_OK {
 
+            // Translate the error code to a message.
             let error_message = match result {
                 JNI_EDETACHED => "thread detached from JVM",
                 JNI_EEXIST => "JVM exists already",
@@ -259,6 +263,7 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) -> jboolean {
 
+        // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let result = (**jvm_attachment.jni_environment()).CallStaticBooleanMethodA.unwrap()(
@@ -290,6 +295,7 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) -> jobject {
 
+        // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let result = (**jvm_attachment.jni_environment()).CallStaticObjectMethodA.unwrap()(
@@ -310,6 +316,7 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
     ) {
 
+        // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         (**jvm_attachment.jni_environment()).CallStaticVoidMethodA.unwrap()(
@@ -326,6 +333,7 @@ impl Jvm {
     /// Tries to resolve the JVM class with the given name.
     pub unsafe fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
 
+        // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
@@ -339,7 +347,7 @@ impl Jvm {
         // An exception occurred, probably a `java.lang.NoClassDefFoundError`.
         if !(**jvm_attachment.jni_environment()).ExceptionOccurred.unwrap()(jvm_attachment.jni_environment()).is_null() {
 
-            // Print any JVM exception.
+            // Only print the JVM exception.
             print_jvm_exception(jvm_attachment.jni_environment());
         };
 
@@ -361,6 +369,7 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
+        // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
@@ -389,6 +398,7 @@ impl Jvm {
         &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
+        // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
