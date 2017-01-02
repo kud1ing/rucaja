@@ -1,5 +1,6 @@
 before_script:
   - export RUST_BACKTRACE=1
+  - echo $JAVA_HOME
 jdk:
   - oraclejdk8
 language: rust
