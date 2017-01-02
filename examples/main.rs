@@ -118,10 +118,10 @@ fn main() {
         // Instantiate the embedded JVM.
         let jvm = Jvm::new(&jvm_options);
 
-        // Get the Java class `Test` from `Test.java`.
+        // Get the Java class `Test` from `Test.class`.
         let class = jvm.get_class("Test").expect("Could not find JVM class");
 
-        // Get the `println()` Java wrapper method for debugging the JVM objects.
+        // Get the `println()` Java method so that we can print JVM objects.
         let println = jvm.get_static_method(
             &class,
             "println",
@@ -130,7 +130,7 @@ fn main() {
 
         create_a_java_string(&jvm, &class, &println);
 
-        // Call some Java methods.
+        // Call some Java methods from `Test.class`.
         call_static_boolean_method(&jvm, &class);
         call_static_object_method(&jvm, &class, &println);
         call_static_void_method(&jvm, &class);
