@@ -216,7 +216,7 @@ impl Jvm {
         }
     }
 
-    /// Tries to call the given JVM static void method in the given JVM class.
+    /// Tries to call the given JVM object constructor in the given JVM class.
     /// Currently panics if a JVM exception occurs.
     pub unsafe fn call_constructor(
         &self, jvm_class: &JvmClass, jvm_constructor_method: &JvmMethod, args: *const jvalue
@@ -445,6 +445,9 @@ impl Jvm {
     /// Creates and returns a non-interned JVM string.
     pub unsafe fn new_jstring(&self, string: &str) -> jstring {
 
+        // Attach the current native thread to the JVM.
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
         // Get the string class.
         let string_class =
             self.get_class("java/lang/String").
@@ -454,16 +457,19 @@ impl Jvm {
         // TODO: choose a string constructor that accepts a string.
         let string_constructor = self.get_constructor(
             &string_class,
-            "()V"
+            "(Ljava/lang/String;)V",
             ).expect("Could not find JVM method");
 
+        let string_as_cstring = CString::new(string).unwrap();
+
+        // TODO: this still returns an interned string.
+
         // Call the constructor.
-        //let args = vec![];
-        //self.call_static_void_method(&string_class, &string_constructor, args.as_ptr());
-        self.call_constructor(&string_class, &string_constructor, ptr::null())
+        let args = vec![jvalue_from_jobject(self.new_jstring_interned(string))];
+        self.call_constructor(&string_class, &string_constructor, args.as_ptr())
     }
 
-    /// Creates and returns a interned JVM string.
+    /// Creates and returns an interned JVM string.
     pub unsafe fn new_jstring_interned(&self, string: &str) -> jstring {
 
         // Attach the current native thread to the JVM.
