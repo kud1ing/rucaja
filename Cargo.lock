@@ -2,13 +2,13 @@
 name = "rucaja"
 version = "0.2.0"
 dependencies = [
- "jni-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "jni-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "jni-sys"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [metadata]
-"checksum jni-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "510941fbeecc62a2c318bc717d32e32b6672ceb64b1795d6b11d8d360dcf52c7"
+"checksum jni-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "83ba0fad4625733b25833da250d0c84058314e1a276f4939f3e87c195997c206"

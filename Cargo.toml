@@ -12,4 +12,4 @@ repository = "https://github.com/kud1ing/rucaja"
 version = "0.2.0"
 
 [dependencies]
-jni-sys="0.2.1"
+jni-sys="0.2.2"

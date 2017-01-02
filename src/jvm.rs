@@ -1,7 +1,7 @@
 use jni_sys::{
-    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_ERR, JNI_EDETACHED, JNI_EVERSION, JNI_ENOMEM,
-    JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte, jchar,
-    jint, jdouble, jfloat, jlong, jobject, jshort, jstring, jvalue
+    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_CreateJavaVM, JNI_ERR, JNI_EDETACHED, JNI_EVERSION,
+    JNI_ENOMEM, JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte,
+    jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jstring, jvalue
 };
 use jvm_attachment::JvmAttachment;
 use jvm_class::JvmClass;
@@ -9,6 +9,12 @@ use jvm_method::JvmMethod;
 use std::ffi::CString;
 use std::ptr;
 use std::os::raw::c_void;
+
+// =================================================================================================
+
+#[link(name="jvm")]
+extern {
+}
 
 // =================================================================================================
 
@@ -501,21 +507,6 @@ impl Drop for Jvm {
         // The Java 8 documentation does not mention this restriction anymore. Calling
         // `DestroyJavaVM()` led to `SIGSEV`s with Java 8, though.
     }
-}
-
-// =================================================================================================
-
-
-#[link(name="jvm")]
-extern {
-    // TODO: use `JNI_CreateJavaVM()` from rust-jni-sys > 0.2.1:
-    fn JNI_CreateJavaVM(pvm: *mut *mut JavaVM, penv: *mut *mut c_void, args: *mut c_void) -> jint;
-}
-
-
-#[cfg(test)]
-mod tests {
-
 }
 
 // =================================================================================================
