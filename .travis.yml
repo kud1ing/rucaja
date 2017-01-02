@@ -1,6 +1,9 @@
 before_script:
   - export RUST_BACKTRACE=1
   - echo $JAVA_HOME
+env:
+  global:
+    - JAVA_HOME=/usr/lib/jvm/java-8-oracle
 jdk:
   - oraclejdk8
 language: rust
