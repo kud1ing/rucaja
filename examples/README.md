@@ -1,5 +1,6 @@
-This directory contains Java code and Rust code:
+This example consists of:
 
-* `main.rs`: Rust code that calls Java code from `Test.class`
+* `main.rs`: Rust code that calls Java methods in `Test.class`
 * `Test.class`: produced by the Java compiler from `Test.java`
-* `Test.java`: contains a Java class. The class and its methods are called from Rust code in `main.rs`
+* `Test.java`: contains the source code of a Java class.
+    The class and its methods are called from Rust code in `main.rs`
