@@ -2,16 +2,6 @@
 
 Calling Java code from Rust via JNI.
 
-The interface is not yet stable.
-
-
-## Tracing
-
-JVM options:
-
-* `-verbose:jni`
-* `-Xcheck:jni:trace`
-
 
 ## Platforms
 
