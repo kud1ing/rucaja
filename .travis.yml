@@ -1,5 +1,7 @@
 before_script:
   - export RUST_BACKTRACE=1
+jdk:
+  - oraclejdk8
 language: rust
 matrix:
   allow_failures:
