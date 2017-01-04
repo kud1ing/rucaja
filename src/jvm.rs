@@ -452,7 +452,7 @@ impl Jvm {
     pub unsafe fn new_jstring(&self, string: &str) -> jstring {
 
         // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
+        JvmAttachment::new(self.jvm);
 
         // Get the string class.
         let string_class =
@@ -466,7 +466,7 @@ impl Jvm {
             "(Ljava/lang/String;)V",
             ).expect("Could not find JVM method");
 
-        let string_as_cstring = CString::new(string).unwrap();
+        // let string_as_cstring = CString::new(string).unwrap();
 
         // TODO: this still returns an interned string.
 

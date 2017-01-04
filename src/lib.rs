@@ -9,7 +9,8 @@ mod jvm_method;
 mod jvm_object;
 
 pub use jni_sys::{
-    jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
+    jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue,
+    JNI_FALSE, JNI_TRUE,
 };
 
 pub use jvm::{
