@@ -7,6 +7,41 @@ use rucaja::{
 use std::ptr::null;
 
 
+/// The main function.
+fn main() {
+
+    // JVM options.
+    let jvm_options = [
+        //"-Djava.security.debug=all",
+        //"-verbose:gc",
+        //"-verbose:jni",
+        //"-Xcheck:jni",
+    ];
+
+    unsafe {
+        // Instantiate the embedded JVM.
+        let jvm = Jvm::new(&jvm_options);
+
+        // Get the Java class `Test` from `Test.class`.
+        let class = jvm.get_class("Test").expect("Could not find JVM class");
+
+        // Get the `println()` method from `Test.class` so that we can print JVM objects.
+        let println = jvm.get_static_method(
+            &class,
+            "println",
+            "(Ljava/lang/Object;)V"
+        ).expect("Could not find JVM method");
+
+        create_a_java_string(&jvm, &class, &println);
+
+        // Call some Java methods from `Test.class`.
+        call_static_boolean_method(&jvm, &class);
+        call_static_object_method(&jvm, &class, &println);
+        call_static_void_method(&jvm, &class);
+    }
+}
+
+
 /// Calls a static Java method that returns a Java `bool`.
 fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
@@ -17,7 +52,6 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
     ];
 
     unsafe {
-
         // Get the Java method.
         let jvm_method = jvm.get_static_method(
             &class,
@@ -52,22 +86,22 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         // Iterate over the Java method names.
         for jvm_method_name in &jvm_method_names {
 
-                // Get the current Java method.
-                let jvm_method = jvm.get_static_method(
-                    &class,
-                    jvm_method_name,
-                    "()Ljava/lang/String;"
-                ).expect("Could not find JVM method");
+            // Get the current Java method.
+            let jvm_method = jvm.get_static_method(
+                &class,
+                jvm_method_name,
+                "()Ljava/lang/String;"
+            ).expect("Could not find JVM method");
 
-                // Call the Java method.
-                let result = jvm.call_static_object_method(&class, &jvm_method, null());
-                println!("* `call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
+            // Call the Java method.
+            let result = jvm.call_static_object_method(&class, &jvm_method, null());
+            println!("* `call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
 
-                // Print the Java result object via a Java method.
-                println!("** print the JVM object:");
-                let args = vec![jvalue_from_jobject(result)];
-                jvm.call_static_void_method(&class, &println, args.as_ptr());
-            }
+            // Print the Java result object via a Java method.
+            println!("** print the JVM object:");
+            let args = vec![jvalue_from_jobject(result)];
+            jvm.call_static_void_method(&class, &println, args.as_ptr());
+        }
     }
 }
 
@@ -75,7 +109,6 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
-
         // Get the Java method.
         let jvm_method = jvm.get_static_method(
             &class,
@@ -94,46 +127,12 @@ fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
     unsafe {
         println!("* `create_a_java_string()`");
 
-        // Get the Java method.
+        // Create a Java string.
         let java_string = jvm.new_jstring("Hello World");
-        //let java_string = jvm.new_jstring_interned("Hello World");
 
         // Print the Java string via a Java method.
         println!("** print the JVM string:");
         let args = vec![jvalue_from_jobject(java_string)];
         jvm.call_static_void_method(&class, &println, args.as_ptr());
-
-    }
-}
-
-fn main() {
-
-    // JVM options.
-    let jvm_options = [
-        //"-verbose:gc",
-        //"-verbose:jni",
-        //"-Xcheck:jni",
-    ];
-
-    unsafe {
-        // Instantiate the embedded JVM.
-        let jvm = Jvm::new(&jvm_options);
-
-        // Get the Java class `Test` from `Test.class`.
-        let class = jvm.get_class("Test").expect("Could not find JVM class");
-
-        // Get the `println()` Java method so that we can print JVM objects.
-        let println = jvm.get_static_method(
-            &class,
-            "println",
-            "(Ljava/lang/Object;)V"
-        ).expect("Could not find JVM method");
-
-        create_a_java_string(&jvm, &class, &println);
-
-        // Call some Java methods from `Test.class`.
-        call_static_boolean_method(&jvm, &class);
-        call_static_object_method(&jvm, &class, &println);
-        call_static_void_method(&jvm, &class);
     }
 }
