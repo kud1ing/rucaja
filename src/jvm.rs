@@ -466,8 +466,6 @@ impl Jvm {
             "(Ljava/lang/String;)V",
             ).expect("Could not find JVM method");
 
-        // let string_as_cstring = CString::new(string).unwrap();
-
         // TODO: this still returns an interned string.
 
         // Call the constructor.
@@ -482,9 +480,6 @@ impl Jvm {
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
         let string_as_cstring = CString::new(string).unwrap();
-
-        // TODO: call the constructor on "java/lang/String" instead because `NewStringUTF()`
-        // creates interned strings which give `java.security.AccessControlContext`.
 
         let result = (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
             jvm_attachment.jni_environment(),
