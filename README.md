@@ -3,6 +3,16 @@
 Calling Java code from Rust via JNI.
 
 
+## Status
+
+Things should work. Biggest obstacle is currently https://github.com/kud1ing/rucaja/issues/9.
+
+A more complete example is
+[kud1ing/tinkerpop-rs](https://github.com/kud1ing/tinkerpop-rs) which uses Rucaja to call [Apache TinkerPop](https://tinkerpop.apache.org).
+
+Creating a flat Java wrapper class and producing a fat JAR with all the dependencies reduces the Rust interface code.
+
+
 ## Platforms
 
 The code is tested on Linux and macOS.
