@@ -5,7 +5,7 @@ Calling Java code from Rust via JNI.
 
 ## Status
 
-Things should work. Biggest obstacle is currently https://github.com/kud1ing/rucaja/issues/9.
+Things should work.
 
 A more complete example is
 [kud1ing/tinkerpop-rs](https://github.com/kud1ing/tinkerpop-rs) which uses Rucaja to call [Apache TinkerPop](https://tinkerpop.apache.org).
