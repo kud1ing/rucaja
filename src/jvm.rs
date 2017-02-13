@@ -378,10 +378,6 @@ impl Jvm {
         // Print any JVM exception.
         print_jvm_exception(jvm_attachment.jni_environment());
 
-        if jvm_class_ptr.is_null() {
-            return None;
-        }
-
         JvmClass::new(self, jvm_class_ptr)
     }
 
@@ -413,10 +409,6 @@ impl Jvm {
         // Print any JVM exception.
         print_jvm_exception(jvm_attachment.jni_environment());
 
-        if jvm_method_ptr.is_null() {
-            return None;
-        }
-
         JvmMethod::new(jvm_method_ptr)
     }
 
@@ -441,10 +433,6 @@ impl Jvm {
 
         // Print any JVM exception.
         print_jvm_exception(jvm_attachment.jni_environment());
-
-        if jvm_method_ptr.is_null() {
-            return None;
-        }
 
         JvmMethod::new(jvm_method_ptr)
     }
