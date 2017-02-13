@@ -448,33 +448,8 @@ impl Jvm {
         JvmMethod::new(jvm_method_ptr)
     }
 
-    /// Creates and returns a non-interned JVM string.
-    pub unsafe fn new_jstring(&self, string: &str) -> jstring {
-
-        // Attach the current native thread to the JVM.
-        JvmAttachment::new(self.jvm);
-
-        // Get the string class.
-        let string_class =
-            self.get_class("java/lang/String").
-            expect("Could not find class `java.lang.String`");
-
-        // Get the constructor.
-        // TODO: choose a string constructor that accepts a string.
-        let string_constructor = self.get_constructor(
-            &string_class,
-            "(Ljava/lang/String;)V",
-            ).expect("Could not find JVM method");
-
-        // TODO: this still returns an interned string.
-
-        // Call the constructor.
-        let args = vec![jvalue_from_jobject(self.new_jstring_interned(string))];
-        self.call_constructor(&string_class, &string_constructor, args.as_ptr())
-    }
-
-    /// Creates and returns an interned JVM string.
-    pub unsafe fn new_jstring_interned(&self, string: &str) -> jstring {
+    /// Creates and returns a JVM string.
+    pub unsafe fn new_jvm_string(&self, string: &str) -> jstring {
 
         // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);

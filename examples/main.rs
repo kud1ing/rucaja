@@ -128,8 +128,7 @@ fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         println!("* `create_a_java_string()`");
 
         // Create a Java string.
-        // let java_string = jvm.new_jstring("Hello World");
-        let java_string = jvm.new_jstring_interned("Hello World");
+        let java_string = jvm.new_jvm_string("Hello World");
 
         // Print the Java string via a Java method.
         println!("** print the JVM string:");
