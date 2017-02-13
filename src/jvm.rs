@@ -1,11 +1,12 @@
 use jni_sys::{
     JavaVM, JavaVMInitArgs, JavaVMOption, JNI_CreateJavaVM, JNI_ERR, JNI_EDETACHED, JNI_EVERSION,
     JNI_ENOMEM, JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte,
-    jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jstring, jvalue
+    jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
 use jvm_attachment::JvmAttachment;
 use jvm_class::JvmClass;
 use jvm_method::JvmMethod;
+use jvm_object::JvmObject;
 use jvm_string::JvmString;
 use std::ffi::CString;
 use std::ptr;
@@ -321,10 +322,10 @@ impl Jvm {
 
     // TODO: call_static_long_method()
 
-    // TODO: call_static_object_method()
+    ///
     pub unsafe fn call_static_object_method(
         &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
-    ) -> jobject {
+    ) -> Option<JvmObject> {
 
         // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
@@ -338,7 +339,7 @@ impl Jvm {
 
         print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
 
-        result
+        JvmObject::new(self, result)
     }
 
     /// Tries to call the given JVM static void method in the given JVM class.

@@ -1,6 +1,6 @@
 [root]
 name = "rucaja"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "jni-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

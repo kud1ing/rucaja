@@ -94,12 +94,12 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
             ).expect("Could not find JVM method");
 
             // Call the Java method.
-            let result = jvm.call_static_object_method(&class, &jvm_method, null());
-            println!("* `call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, result);
+            let jvm_object = jvm.call_static_object_method(&class, &jvm_method, null()).unwrap();
+            println!("* `call_static_object_method(): `{}()` returned {:?}`", jvm_method_name, jvm_object.jvm_object_ptr());
 
             // Print the Java result object via a Java method.
             println!("** print the JVM object:");
-            let args = vec![jvalue_from_jobject(result)];
+            let args = vec![jvalue_from_jobject(*jvm_object.jvm_object_ptr())];
             jvm.call_static_void_method(&class, &println, args.as_ptr());
         }
     }
