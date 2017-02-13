@@ -7,6 +7,7 @@ mod jvm_attachment;
 mod jvm_class;
 mod jvm_method;
 mod jvm_object;
+mod jvm_string;
 
 pub use jni_sys::{
     jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue,
@@ -28,3 +29,4 @@ pub use jvm::{
 pub use jvm_class::JvmClass;
 pub use jvm_method::JvmMethod;
 pub use jvm_object::JvmObject;
+pub use jvm_string::JvmString;

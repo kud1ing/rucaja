@@ -128,11 +128,11 @@ fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         println!("* `create_a_java_string()`");
 
         // Create a Java string.
-        let java_string = jvm.new_jvm_string("Hello World");
+        let jvm_string = jvm.new_jvm_string("Hello World").expect("Could not create a string");
 
         // Print the Java string via a Java method.
         println!("** print the JVM string:");
-        let args = vec![jvalue_from_jobject(java_string)];
+        let args = vec![jvalue_from_jobject(*jvm_string.jvm_string_ptr())];
         jvm.call_static_void_method(&class, &println, args.as_ptr());
     }
 }
