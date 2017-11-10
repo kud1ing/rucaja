@@ -22,83 +22,47 @@ extern {
 
 /// Wraps a `jboolean` in a `jvalue`.
 pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.z() = arg;
-
-    jvalue
+    jvalue { z: arg }
 }
 
 /// Wraps a `jbyte` in a `jvalue`.
 pub unsafe fn jvalue_from_jbyte(arg: jbyte) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.b() = arg;
-
-    jvalue
+    jvalue { b: arg }
 }
 
 /// Wraps a `jchar` in a `jvalue`.
 pub unsafe fn jvalue_from_jchar(arg: jchar) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.c() = arg;
-
-    jvalue
+    jvalue { c: arg }
 }
 
 /// Wraps a `jdouble` in a `jvalue`.
 pub unsafe fn jvalue_from_jdouble(arg: jdouble) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.d() = arg;
-
-    jvalue
+    jvalue { d: arg }
 }
 
 /// Wraps a `jint` in a `jvalue`.
 pub unsafe fn jvalue_from_jint(arg: jint) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.i() = arg;
-
-    jvalue
+    jvalue { i: arg }
 }
 
 /// Wraps a `jfloat` in a `jvalue`.
 pub unsafe fn jvalue_from_jfloat(arg: jfloat) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.f() = arg;
-
-    jvalue
+    jvalue { f: arg }
 }
 
 /// Wraps a `jlong` in a `jvalue`.
 pub unsafe fn jvalue_from_jlong(arg: jlong) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.j() = arg;
-
-    jvalue
+    jvalue { j: arg }
 }
 
 /// Wraps a `jobject` in a `jvalue`.
 pub unsafe fn jvalue_from_jobject(arg: jobject) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.l() = arg;
-
-    jvalue
+    jvalue { l: arg }
 }
 
 /// Wraps a `jshort` in a `jvalue`.
 pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
-
-    let mut jvalue = jvalue::default();
-    *jvalue.s() = arg;
-
-    jvalue
+    jvalue { s: arg }
 }
 
 ///
@@ -178,18 +142,21 @@ impl Jvm {
 
         for jvm_option_cstring in &jvm_option_cstrings {
 
-            let mut jvm_option = JavaVMOption::default();
-            jvm_option.optionString = jvm_option_cstring.as_ptr() as *mut i8;
+            let jvm_option = JavaVMOption {
+                optionString: jvm_option_cstring.as_ptr() as *mut i8,
+                extraInfo: ptr::null_mut() as *mut c_void
+            };
 
             jvm_options.push(jvm_option);
         }
 
         // Create the JVM arguments.
-        let mut jvm_arguments = JavaVMInitArgs::default();
-        jvm_arguments.version = JNI_VERSION_1_8;
-        jvm_arguments.options = jvm_options.as_mut_ptr();
-        jvm_arguments.nOptions = jvm_options.len() as i32;
-        jvm_arguments.ignoreUnrecognized = JNI_FALSE;
+        let mut jvm_arguments = JavaVMInitArgs {
+            version: JNI_VERSION_1_8,
+            options: jvm_options.as_mut_ptr(),
+            nOptions: jvm_options.len() as i32,
+            ignoreUnrecognized: JNI_FALSE
+        };
 
         // Initialize space for a pointer to the JNI environment.
         let mut jvm: *mut JavaVM = ptr::null_mut();
