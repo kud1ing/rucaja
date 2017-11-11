@@ -11,7 +11,7 @@ mod jvm_string;
 
 pub use jni_sys::{
     jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue,
-    JNI_FALSE, JNI_TRUE,
+    JNI_FALSE, JNI_TRUE, JNIEnv,
 };
 
 pub use jvm::{
