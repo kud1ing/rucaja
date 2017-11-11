@@ -22,6 +22,6 @@ impl JvmMethod {
             return None;
         }
 
-        Some(JvmMethod { jvm_method_ptr: jvm_method_ptr } )
+        Some(JvmMethod { jvm_method_ptr } )
     }
 }
