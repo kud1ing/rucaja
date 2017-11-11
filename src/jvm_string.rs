@@ -6,7 +6,7 @@ use std::os::raw::c_char;
 use std::ptr;
 
 
-jvm_wrapper_struct!(JvmString, jstring);
+jvm_wrapper!(JvmString, jstring);
 
 impl<'a> ToString for JvmString<'a> {
 

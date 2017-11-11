@@ -1,5 +1,5 @@
-use jni_sys::jbyteArray;
+use jni_sys::{ jbyteArray, jsize };
 use jvm::Jvm;
 use jvm_attachment::JvmAttachment;
 
-jvm_wrapper_struct!(JvmByteArray, jbyteArray);
+jvm_array_wrapper!(JvmByteArray, jbyteArray);

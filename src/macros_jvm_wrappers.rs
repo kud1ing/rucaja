@@ -1,5 +1,5 @@
 /// Constructs a type safe Rust wrapper struct for a JVM class.
-macro_rules! jvm_wrapper_struct {
+macro_rules! jvm_wrapper {
     ($rust_struct_name:ident, $java_type:ident) => (
 
         /// The Rust wrapper for the corresponding JVM class.
@@ -72,3 +72,33 @@ macro_rules! jvm_wrapper_struct {
         }
     )
 }
+
+
+/// Constructs a type safe Rust wrapper struct for a JVM array class.
+macro_rules! jvm_array_wrapper {
+    ($rust_struct_name:ident, $java_type:ident) => (
+
+        jvm_wrapper!($rust_struct_name, $java_type);
+
+        impl<'a> $rust_struct_name<'a> {
+
+            /// Returns the array length.
+            pub fn length(&self) -> jsize {
+
+                let jvm_array_length = unsafe {
+
+                    // Attach the current native thread to the JVM.
+                    let jvm_attachment = JvmAttachment::new(self.jvm.jvm());
+
+                    (**jvm_attachment.jni_environment()).GetArrayLength.unwrap()(
+                        jvm_attachment.jni_environment(),
+                        self.jvm_ptr
+                    )
+                };
+
+                jvm_array_length
+            }
+        }
+    )
+}
+

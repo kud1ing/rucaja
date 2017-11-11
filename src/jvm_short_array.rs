@@ -1,5 +1,5 @@
-use jni_sys::jshortArray;
+use jni_sys::{ jshortArray, jsize };
 use jvm::Jvm;
 use jvm_attachment::JvmAttachment;
 
-jvm_wrapper_struct!(JvmShortArray, jshortArray);
+jvm_array_wrapper!(JvmShortArray, jshortArray);

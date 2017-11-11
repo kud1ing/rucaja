@@ -1,5 +1,5 @@
-use jni_sys::jdoubleArray;
+use jni_sys::{ jdoubleArray, jsize };
 use jvm::Jvm;
 use jvm_attachment::JvmAttachment;
 
-jvm_wrapper_struct!(JvmDoubleArray, jdoubleArray);
+jvm_array_wrapper!(JvmDoubleArray, jdoubleArray);

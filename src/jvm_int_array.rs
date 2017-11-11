@@ -1,5 +1,5 @@
-use jni_sys::jintArray;
+use jni_sys::{ jintArray, jsize };
 use jvm::Jvm;
 use jvm_attachment::JvmAttachment;
 
-jvm_wrapper_struct!(JvmIntArray, jintArray);
+jvm_array_wrapper!(JvmIntArray, jintArray);

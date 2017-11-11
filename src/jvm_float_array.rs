@@ -1,5 +1,5 @@
-use jni_sys::jfloatArray;
+use jni_sys::{ jfloatArray, jsize };
 use jvm::Jvm;
 use jvm_attachment::JvmAttachment;
 
-jvm_wrapper_struct!(JvmFloatArray, jfloatArray);
+jvm_array_wrapper!(JvmFloatArray, jfloatArray);

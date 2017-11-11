@@ -1,5 +1,5 @@
-use jni_sys::jbooleanArray;
+use jni_sys::{ jbooleanArray, jsize };
 use jvm::Jvm;
 use jvm_attachment::JvmAttachment;
 
-jvm_wrapper_struct!(JvmBooleanArray, jbooleanArray);
+jvm_array_wrapper!(JvmBooleanArray, jbooleanArray);
