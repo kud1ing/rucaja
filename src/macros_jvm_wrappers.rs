@@ -7,7 +7,7 @@ macro_rules! jvm_wrapper_struct {
 
             jvm: &'a Jvm,
 
-            // A non-null JVM-pointer.
+            // A non-null pointer to an object in the JVM.
             jvm_ptr: $java_type,
         }
 
@@ -25,10 +25,17 @@ macro_rules! jvm_wrapper_struct {
                     return None;
                 }
 
-                // Create a global JVM reference to the given JVM object, to prevent GC from claiming it.
                 let jvm_ptr_global = unsafe {
+
+                    // Attach the current native thread to the JVM.
                     let jvm_attachment = JvmAttachment::new(jvm.jvm());
-                    (**jvm_attachment.jni_environment()).NewGlobalRef.unwrap()(jvm_attachment.jni_environment(), jvm_ptr)
+
+                    // Create a global JVM reference to the given JVM object, to prevent GC from
+                    // claiming it.
+                    (**jvm_attachment.jni_environment()).NewGlobalRef.unwrap()(
+                        jvm_attachment.jni_environment(),
+                        jvm_ptr
+                    )
                 };
 
                 // Could not get the global JVM reference .
