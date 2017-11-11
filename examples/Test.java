@@ -1,5 +1,5 @@
 /**
- * Compiling this file:
+ * Compile this file with:
  *
  *     javac Test.java
  *

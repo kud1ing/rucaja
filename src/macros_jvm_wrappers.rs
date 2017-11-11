@@ -2,9 +2,10 @@
 macro_rules! jvm_wrapper_struct {
     ($rust_struct_name:ident, $java_type:ident) => (
 
-        /// A Rust wrapper for a JVM class.
+        /// The Rust wrapper for the corresponding JVM class.
         pub struct $rust_struct_name<'a> {
 
+            // A reference to the embedded JVM.
             jvm: &'a Jvm,
 
             // A non-null pointer to an object in the JVM.
@@ -13,7 +14,7 @@ macro_rules! jvm_wrapper_struct {
 
         impl<'a> $rust_struct_name<'a> {
 
-            /// Returns a reference to the JVM object.
+            /// Returns a reference to the pointer of the JVM object.
             pub fn jvm_ptr(&self) -> &$java_type {
                 &self.jvm_ptr
             }
@@ -30,8 +31,8 @@ macro_rules! jvm_wrapper_struct {
                     // Attach the current native thread to the JVM.
                     let jvm_attachment = JvmAttachment::new(jvm.jvm());
 
-                    // Create a global JVM reference to the given JVM object, to prevent GC from
-                    // claiming it.
+                    // Hold a global JVM reference to the given JVM object, in order to prevent
+                    // the JVM GC from claiming it.
                     (**jvm_attachment.jni_environment()).NewGlobalRef.unwrap()(
                         jvm_attachment.jni_environment(),
                         jvm_ptr
