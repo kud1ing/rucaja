@@ -14,9 +14,9 @@ macro_rules! jvm_wrapper {
 
         impl<'a> $rust_struct_name<'a> {
 
-            /// Returns a reference to the pointer of the JVM object.
-            pub fn jvm_ptr(&self) -> &$java_type {
-                &self.jvm_ptr
+            /// Returns the pointer of the JVM object.
+            pub fn jvm_ptr(&self) -> $java_type {
+                self.jvm_ptr
             }
 
             /// Instantiates the JVM wrapper struct.
@@ -73,7 +73,6 @@ macro_rules! jvm_wrapper {
     )
 }
 
-
 /// Constructs a type safe Rust wrapper struct for a JVM array class.
 macro_rules! jvm_array_wrapper {
     ($rust_struct_name:ident, $java_type:ident) => (
@@ -101,4 +100,3 @@ macro_rules! jvm_array_wrapper {
         }
     )
 }
-

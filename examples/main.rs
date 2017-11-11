@@ -99,7 +99,7 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
             // Print the Java result object via a Java method.
             println!("** print the JVM object:");
-            let args = vec![jvalue_from_jobject(*jvm_object.jvm_ptr())];
+            let args = vec![jvalue_from_jobject(jvm_object.jvm_ptr())];
             jvm.call_static_void_method(&class, &println, args.as_ptr());
         }
     }
@@ -132,7 +132,7 @@ fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
 
         // Print the Java string via a Java method.
         println!("** print the JVM string:");
-        let args = vec![jvalue_from_jobject(*jvm_string.jvm_ptr())];
+        let args = vec![jvalue_from_jobject(jvm_string.jvm_ptr())];
         jvm.call_static_void_method(&class, &println, args.as_ptr());
     }
 }

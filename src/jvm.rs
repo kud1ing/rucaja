@@ -186,9 +186,7 @@ impl Jvm {
             panic!("`JNI_CreateJavaVM()` signaled an error: {}", error_message);
         }
 
-        Jvm {
-            jvm: jvm,
-        }
+        Jvm { jvm }
     }
 
     /// Tries to call the given JVM object constructor in the given JVM class.
@@ -202,8 +200,8 @@ impl Jvm {
 
         let object = (**jvm_attachment.jni_environment()).NewObjectA.unwrap()(
             jvm_attachment.jni_environment(),
-            *jvm_class.jvm_ptr(),
-            *jvm_constructor_method.jvm_ptr(),
+            jvm_class.jvm_ptr(),
+            jvm_constructor_method.jvm_ptr(),
             args
         );
 
@@ -268,8 +266,8 @@ impl Jvm {
 
         let result = (**jvm_attachment.jni_environment()).CallStaticBooleanMethodA.unwrap()(
             jvm_attachment.jni_environment(),
-            *jvm_class.jvm_ptr(),
-            *jvm_method.jvm_ptr(),
+            jvm_class.jvm_ptr(),
+            jvm_method.jvm_ptr(),
             args
         );
 
@@ -300,8 +298,8 @@ impl Jvm {
 
         let result = (**jvm_attachment.jni_environment()).CallStaticObjectMethodA.unwrap()(
             jvm_attachment.jni_environment(),
-            *jvm_class.jvm_ptr(),
-            *jvm_method.jvm_ptr(),
+            jvm_class.jvm_ptr(),
+            jvm_method.jvm_ptr(),
             args
         );
 
@@ -321,8 +319,8 @@ impl Jvm {
 
         (**jvm_attachment.jni_environment()).CallStaticVoidMethodA.unwrap()(
             jvm_attachment.jni_environment(),
-            *jvm_class.jvm_ptr(),
-            *jvm_method.jvm_ptr(),
+            jvm_class.jvm_ptr(),
+            jvm_method.jvm_ptr(),
             args
         );
 
@@ -370,7 +368,7 @@ impl Jvm {
         let jvm_method_ptr =
             (**jvm_attachment.jni_environment()).GetMethodID.unwrap()(
                 jvm_attachment.jni_environment(),
-                *jvm_class.jvm_ptr(),
+                jvm_class.jvm_ptr(),
                 jvm_method_name_cstring.as_ptr(),
                 jvm_method_signature_cstring.as_ptr()
             );
@@ -395,7 +393,7 @@ impl Jvm {
         let jvm_method_ptr =
             (**jvm_attachment.jni_environment()).GetStaticMethodID.unwrap()(
                 jvm_attachment.jni_environment(),
-                *jvm_class.jvm_ptr(),
+                jvm_class.jvm_ptr(),
                 jvm_method_name_cstring.as_ptr(),
                 jvm_method_signature_cstring.as_ptr()
             );

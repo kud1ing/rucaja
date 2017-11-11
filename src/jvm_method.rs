@@ -11,8 +11,8 @@ pub struct JvmMethod {
 impl JvmMethod {
 
     ///
-    pub fn jvm_ptr(&self) -> &jmethodID {
-        &self.jvm_method_ptr
+    pub fn jvm_ptr(&self) -> jmethodID {
+        self.jvm_method_ptr
     }
 
     ///
