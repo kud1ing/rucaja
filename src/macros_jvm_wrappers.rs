@@ -19,7 +19,7 @@ macro_rules! jvm_wrapper_struct {
             }
 
             /// Instantiates the JVM wrapper struct.
-            pub fn new(jvm: &Jvm, jvm_ptr: $java_type) -> Option<$rust_struct_name> {
+            pub fn from_jvm_ptr(jvm: &Jvm, jvm_ptr: $java_type) -> Option<$rust_struct_name> {
 
                 if jvm_ptr.is_null() {
                     return None;

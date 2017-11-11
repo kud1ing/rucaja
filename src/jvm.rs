@@ -307,7 +307,7 @@ impl Jvm {
 
         print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
 
-        JvmObject::new(self, result)
+        JvmObject::from_jvm_ptr(self, result)
     }
 
     /// Tries to call the given JVM static void method in the given JVM class.
@@ -347,7 +347,7 @@ impl Jvm {
         // Print any JVM exception.
         print_jvm_exception(jvm_attachment.jni_environment());
 
-        JvmClass::new(self, jvm_class_ptr)
+        JvmClass::from_jvm_ptr(self, jvm_class_ptr)
     }
 
     /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
@@ -419,7 +419,7 @@ impl Jvm {
             string_as_cstring.as_ptr()
         );
 
-        JvmString::new(self, jvm_string_ptr)
+        JvmString::from_jvm_ptr(self, jvm_string_ptr)
     }
 }
 
