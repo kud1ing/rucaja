@@ -196,6 +196,7 @@ impl Jvm {
     pub unsafe fn call_constructor(
         &self, jvm_class: &JvmClass, jvm_constructor_method: &JvmMethod, args: *const jvalue
     ) -> jobject {
+
         // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(self.jvm);
 
