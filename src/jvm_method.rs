@@ -25,4 +25,3 @@ impl JvmMethod {
         Some(JvmMethod { jvm_method_ptr: jvm_method_ptr } )
     }
 }
-

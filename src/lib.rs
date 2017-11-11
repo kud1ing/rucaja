@@ -3,7 +3,7 @@ extern crate jni_sys;
 /// This crate allows to call Java code from Rust via JNI.
 
 #[macro_use]
-mod macros_jvm_objects;
+mod macros_jvm_wrappers;
 
 mod jvm;
 mod jvm_attachment;
