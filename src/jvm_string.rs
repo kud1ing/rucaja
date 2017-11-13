@@ -30,7 +30,9 @@ impl<'a> ToString for JvmString<'a> {
 
             // Deallocate the char buffer.
             (**jvm_attachment.jni_environment()).ReleaseStringUTFChars.unwrap()(
-                jvm_attachment.jni_environment(), self.jvm_ptr, char_buffer
+                jvm_attachment.jni_environment(),
+                self.jvm_ptr,
+                char_buffer
             );
 
             // Return that `String`.

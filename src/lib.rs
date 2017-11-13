@@ -24,8 +24,9 @@ mod jvm_string;
 mod jvm_throwable;
 
 pub use jni_sys::{
-    jboolean, jbyte, jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue,
-    JNI_FALSE, JNI_TRUE, JNIEnv,
+    jarray, jboolean, jbooleanArray, jbyte, jbyteArray, jchar, jcharArray, jdouble, jdoubleArray,
+    jfloat, jfloatArray, jint, jintArray, jlong, jlongArray, jobject, jobjectArray, jshort,
+    jshortArray, jthrowable, jvalue, JNI_FALSE, JNI_TRUE, JNIEnv,
 };
 
 pub use jvm::{
