@@ -284,7 +284,26 @@ impl Jvm {
 
     // TODO: call_static_float_method()
 
-    // TODO: call_static_int_method()
+    /// Tries to call the given JVM static int method in the given JVM class.
+    /// Currently panics if a JVM exception occurs.
+    pub unsafe fn call_static_int_method(
+        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
+    ) -> jint {
+
+        // Attach the current native thread to the JVM.
+        let jvm_attachment = JvmAttachment::new(self.jvm);
+
+        let result = (**jvm_attachment.jni_environment()).CallStaticIntMethodA.unwrap()(
+            jvm_attachment.jni_environment(),
+            jvm_class.jvm_ptr(),
+            jvm_method.jvm_ptr(),
+            args
+        );
+
+        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
+
+        result
+    }
 
     // TODO: call_static_long_method()
 
