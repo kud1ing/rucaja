@@ -2,7 +2,8 @@ extern crate jni_sys;
 extern crate rucaja;
 
 use rucaja::{
-    JNI_FALSE, JNI_TRUE, jvalue_from_jboolean, jvalue_from_jobject, Jvm, JvmClass, JvmMethod
+    JNI_FALSE, JNI_TRUE, jvalue_from_jboolean, jvalue_from_jobject, Jvm, JvmClass, JvmMethod,
+    JvmString
 };
 use std::ptr::null;
 
@@ -128,7 +129,7 @@ fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         println!("* `create_a_java_string()`");
 
         // Create a Java string.
-        let jvm_string = jvm.new_jvm_string("Hello World").expect("Could not create a string");
+        let jvm_string = JvmString::new(jvm, "Hello World").expect("Could not create a string");
 
         // Print the Java string via a Java method.
         println!("** print the JVM string:");

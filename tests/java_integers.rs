@@ -1,6 +1,6 @@
 extern crate rucaja;
 
-use rucaja::{Jvm, jvalue_from_jobject};
+use rucaja::{Jvm, JvmString, jvalue_from_jobject};
 
 #[test]
 fn test_java_integers() {
@@ -18,7 +18,7 @@ fn test_java_integers() {
         ).unwrap();
 
         for value in -500..500 {
-            let jvm_string = jvm.new_jvm_string(value.to_string().as_str()).unwrap();
+            let jvm_string = JvmString::new(&jvm, value.to_string().as_str()).unwrap();
 
             let jvm_int = jvm.call_static_int_method(
                 &integer_clazz,
