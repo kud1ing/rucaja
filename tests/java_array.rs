@@ -1,6 +1,6 @@
 extern crate rucaja;
 
-use rucaja::{Jvm, jvalue_from_jobject, jvalue_from_jint, JvmObjectArray, JvmObject};
+use rucaja::{Jvm, JvmMethod, JvmObjectArray, JvmObject, jvalue_from_jobject, jvalue_from_jint};
 
 #[test]
 fn test_java_arrays() {
@@ -28,7 +28,8 @@ fn test_java_arrays() {
 
         let arrays_clazz = jvm.get_class("java/util/Arrays").unwrap();
 
-        let binary_search_method = jvm.get_static_method(
+        let binary_search_method = JvmMethod::get_static_method(
+            &jvm,
             &arrays_clazz,
             "binarySearch",
             "([Ljava/lang/Object;Ljava/lang/Object;)I"

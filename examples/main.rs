@@ -27,7 +27,8 @@ fn main() {
         let class = jvm.get_class("Test").expect("Could not find JVM class");
 
         // Get the `println()` method from `Test.class` so that we can print JVM objects.
-        let println = jvm.get_static_method(
+        let println = JvmMethod::get_static_method(
+            &jvm,
             &class,
             "println",
             "(Ljava/lang/Object;)V"
@@ -54,7 +55,8 @@ fn call_static_boolean_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
         // Get the Java method.
-        let jvm_method = jvm.get_static_method(
+        let jvm_method = JvmMethod::get_static_method(
+            jvm,
             &class,
             "static_method_that_returns_a_boolean",
             "(Z)Z"
@@ -88,7 +90,8 @@ fn call_static_object_method(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
         for jvm_method_name in &jvm_method_names {
 
             // Get the current Java method.
-            let jvm_method = jvm.get_static_method(
+            let jvm_method = JvmMethod::get_static_method(
+                jvm,
                 &class,
                 jvm_method_name,
                 "()Ljava/lang/String;"
@@ -111,7 +114,8 @@ fn call_static_void_method(jvm: &Jvm, class: &JvmClass) {
 
     unsafe {
         // Get the Java method.
-        let jvm_method = jvm.get_static_method(
+        let jvm_method = JvmMethod::get_static_method(
+            jvm,
             &class,
             "static_void_method",
             "()V"

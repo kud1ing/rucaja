@@ -1,6 +1,6 @@
 extern crate rucaja;
 
-use rucaja::{Jvm, JvmString, jvalue_from_jobject};
+use rucaja::{Jvm, JvmMethod, JvmString, jvalue_from_jobject};
 
 #[test]
 fn test_java_integers() {
@@ -11,7 +11,8 @@ fn test_java_integers() {
 
         let integer_clazz = jvm.get_class("java/lang/Integer").unwrap();
 
-        let parse_int_method = jvm.get_static_method(
+        let parse_int_method = JvmMethod::get_static_method(
+            &jvm,
             &integer_clazz,
             "parseInt",
             "(Ljava/lang/String;)I"

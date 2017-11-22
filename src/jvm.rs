@@ -84,7 +84,7 @@ unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 }
 
 ///
-unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
+pub unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
     // A JVM exception occurred.
     if jvm_exception_occured(jni_environment) {
@@ -369,57 +369,7 @@ impl Jvm {
     /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
     pub unsafe fn get_constructor(&self, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
 
-        self.get_method(jvm_class, "<init>", jvm_method_signature)
-    }
-
-    /// Tries to resolve the JVM method with the given name and signature in the given JVM class.
-    pub unsafe fn get_method(
-        &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
-    ) -> Option<JvmMethod> {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
-        let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
-
-        let jvm_method_ptr =
-            (**jvm_attachment.jni_environment()).GetMethodID.unwrap()(
-                jvm_attachment.jni_environment(),
-                jvm_class.jvm_ptr(),
-                jvm_method_name_cstring.as_ptr(),
-                jvm_method_signature_cstring.as_ptr()
-            );
-
-        // Print any JVM exception.
-        print_jvm_exception(jvm_attachment.jni_environment());
-
-        JvmMethod::new(jvm_method_ptr)
-    }
-
-    /// Tries to resolve the static JVM method with the given name and signature in the given JVM class.
-    pub unsafe fn get_static_method(
-        &self, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
-    ) -> Option<JvmMethod> {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
-        let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
-
-        let jvm_method_ptr =
-            (**jvm_attachment.jni_environment()).GetStaticMethodID.unwrap()(
-                jvm_attachment.jni_environment(),
-                jvm_class.jvm_ptr(),
-                jvm_method_name_cstring.as_ptr(),
-                jvm_method_signature_cstring.as_ptr()
-            );
-
-        // Print any JVM exception.
-        print_jvm_exception(jvm_attachment.jni_environment());
-
-        JvmMethod::new(jvm_method_ptr)
+        JvmMethod::get_method(self, jvm_class, "<init>", jvm_method_signature)
     }
 }
 
