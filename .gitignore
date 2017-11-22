@@ -1,3 +1,5 @@
 .idea/
 target/
 Cargo.lock
+hs_err_pid*.log
+core
