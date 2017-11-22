@@ -22,6 +22,8 @@ impl JvmMethod {
             return None;
         }
 
+        // A `jmethodID` is not a `jobject`, that's why it's neither necessary nor possible to call `NewGlobalRef()`.
+        
         Some(JvmMethod { jvm_method_ptr } )
     }
 }
