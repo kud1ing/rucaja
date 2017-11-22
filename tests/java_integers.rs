@@ -5,7 +5,9 @@ use rucaja::{Jvm, jvalue_from_jobject};
 #[test]
 fn test_java_integers() {
     unsafe {
-        let jvm = Jvm::new(&[]);
+        let jvm = Jvm::new(&[
+            "-Xcheck:jni"
+        ]);
 
         let integer_clazz = jvm.get_class("java/lang/Integer").unwrap();
 
