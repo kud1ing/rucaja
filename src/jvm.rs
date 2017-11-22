@@ -3,10 +3,6 @@ use jni_sys::{
     JNI_ENOMEM, JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte,
     jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
-use jvm_attachment::JvmAttachment;
-use jvm_class::JvmClass;
-use jvm_method::JvmMethod;
-use jvm_object::JvmObject;
 use std::ffi::CString;
 use std::ptr;
 use std::os::raw::c_void;
@@ -65,12 +61,12 @@ pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
 }
 
 ///
-unsafe fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
+pub unsafe fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
     return !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null()
 }
 
 ///
-unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
+pub unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
     // A JVM exception occurred.
     if jvm_exception_occured(jni_environment) {
@@ -186,184 +182,6 @@ impl Jvm {
         }
 
         Jvm { jvm }
-    }
-
-    /// Tries to call the given JVM object constructor in the given JVM class.
-    /// Currently panics if a JVM exception occurs.
-    pub unsafe fn call_constructor(
-        &self, jvm_class: &JvmClass, jvm_constructor_method: &JvmMethod, args: *const jvalue
-    ) -> jobject {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let object = (**jvm_attachment.jni_environment()).NewObjectA.unwrap()(
-            jvm_attachment.jni_environment(),
-            jvm_class.jvm_ptr(),
-            jvm_constructor_method.jvm_ptr(),
-            args
-        );
-
-        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
-
-        object
-    }
-
-    // TODO: call_boolean_method()
-
-    // TODO: call_byte_method()
-
-    // TODO: call_char_method()
-
-    // TODO: call_double_method()
-
-    // TODO: call_float_method()
-
-    // TODO: call_int_method()
-
-    // TODO: call_long_method()
-
-    // TODO: call_object_method()
-
-    // TODO: call_short_method()
-
-    // TODO: call_void_method()
-
-
-    // TODO: call_nonvirtual_boolean_method()
-
-    // TODO: call_nonvirtual_byte_method()
-
-    // TODO: call_nonvirtual_char_method()
-
-    // TODO: call_nonvirtual_double_method()
-
-    // TODO: call_nonvirtual_float_method()
-
-    // TODO: call_nonvirtual_int_method()
-
-    // TODO: call_nonvirtual_long_method()
-
-    // TODO: call_nonvirtual_object_method()
-
-    // TODO: call_nonvirtual_short_method()
-
-    // TODO: call_nonvirtual_void_method()
-
-
-
-    // TODO: call_static_boolean_method()
-
-    /// Tries to call the given JVM static boolean method in the given JVM class.
-    /// Currently panics if a JVM exception occurs.
-    pub unsafe fn call_static_boolean_method(
-        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
-    ) -> jboolean {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let result = (**jvm_attachment.jni_environment()).CallStaticBooleanMethodA.unwrap()(
-            jvm_attachment.jni_environment(),
-            jvm_class.jvm_ptr(),
-            jvm_method.jvm_ptr(),
-            args
-        );
-
-        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
-
-        result
-    }
-
-    // TODO: call_static_byte_method()
-
-    // TODO: call_static_char_method()
-
-    // TODO: call_static_double_method()
-
-    // TODO: call_static_float_method()
-
-    /// Tries to call the given JVM static int method in the given JVM class.
-    /// Currently panics if a JVM exception occurs.
-    pub unsafe fn call_static_int_method(
-        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
-    ) -> jint {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let result = (**jvm_attachment.jni_environment()).CallStaticIntMethodA.unwrap()(
-            jvm_attachment.jni_environment(),
-            jvm_class.jvm_ptr(),
-            jvm_method.jvm_ptr(),
-            args
-        );
-
-        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
-
-        result
-    }
-
-    // TODO: call_static_long_method()
-
-    ///
-    pub unsafe fn call_static_object_method(
-        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
-    ) -> Option<JvmObject> {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let result = (**jvm_attachment.jni_environment()).CallStaticObjectMethodA.unwrap()(
-            jvm_attachment.jni_environment(),
-            jvm_class.jvm_ptr(),
-            jvm_method.jvm_ptr(),
-            args
-        );
-
-        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
-
-        JvmObject::from_jvm_ptr(self, result)
-    }
-
-    /// Tries to call the given JVM static void method in the given JVM class.
-    /// Currently panics if a JVM exception occurs.
-    pub unsafe fn call_static_void_method(
-        &self, jvm_class: &JvmClass, jvm_method: &JvmMethod, args: *const jvalue
-    ) {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        (**jvm_attachment.jni_environment()).CallStaticVoidMethodA.unwrap()(
-            jvm_attachment.jni_environment(),
-            jvm_class.jvm_ptr(),
-            jvm_method.jvm_ptr(),
-            args
-        );
-
-        print_and_panic_on_jvm_exception(jvm_attachment.jni_environment());
-
-    }
-
-    /// Tries to resolve the JVM class with the given name.
-    pub unsafe fn get_class(&self, jvm_class_name: &str) -> Option<JvmClass> {
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(self.jvm);
-
-        let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
-
-        let jvm_class_ptr =
-            (**jvm_attachment.jni_environment()).FindClass.unwrap()(
-                jvm_attachment.jni_environment(),
-                jvm_class_name_cstring.as_ptr()
-            );
-
-        // Print any JVM exception.
-        print_jvm_exception(jvm_attachment.jni_environment());
-
-        JvmClass::from_jvm_ptr(self, jvm_class_ptr)
     }
 }
 

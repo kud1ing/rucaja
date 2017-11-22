@@ -5,8 +5,8 @@ macro_rules! jvm_wrapper {
         /// The Rust wrapper for the corresponding JVM class.
         pub struct $rust_struct_name<'a> {
 
-            // A reference to the embedded JVM.
-            jvm: &'a Jvm,
+            // A reference to the JVM attachment.
+            jvm_attachment: &'a JvmAttachment,
 
             // A non-null pointer to an object in the JVM.
             jvm_ptr: $java_type,
@@ -20,16 +20,13 @@ macro_rules! jvm_wrapper {
             }
 
             /// Instantiates the JVM wrapper struct.
-            pub fn from_jvm_ptr(jvm: &Jvm, jvm_ptr: $java_type) -> Option<$rust_struct_name> {
+            pub fn from_jvm_ptr(jvm_attachment: &JvmAttachment, jvm_ptr: $java_type) -> Option<$rust_struct_name> {
 
                 if jvm_ptr.is_null() {
                     return None;
                 }
 
                 let jvm_ptr_global = unsafe {
-
-                    // Attach the current native thread to the JVM.
-                    let jvm_attachment = JvmAttachment::new(jvm.jvm());
 
                     // Hold a global JVM reference to the given JVM object, in order to prevent
                     // the JVM GC from claiming it.
@@ -46,7 +43,7 @@ macro_rules! jvm_wrapper {
 
                 Some(
                     $rust_struct_name {
-                        jvm: jvm,
+                        jvm_attachment: jvm_attachment,
                         jvm_ptr: jvm_ptr_global
                     }
                 )
@@ -58,13 +55,9 @@ macro_rules! jvm_wrapper {
             fn drop(&mut self) {
 
                 unsafe {
-
-                    // Attach the current native thread to the JVM.
-                    let jvm_attachment = JvmAttachment::new(self.jvm.jvm());
-
                     // Delete the global JVM reference to the JVM object.
-                    (**jvm_attachment.jni_environment()).DeleteGlobalRef.unwrap()(
-                        jvm_attachment.jni_environment(),
+                    (**self.jvm_attachment.jni_environment()).DeleteGlobalRef.unwrap()(
+                        self.jvm_attachment.jni_environment(),
                         self.jvm_ptr
                     );
                 }
@@ -86,11 +79,8 @@ macro_rules! jvm_array_wrapper {
 
                 let jvm_array_length = unsafe {
 
-                    // Attach the current native thread to the JVM.
-                    let jvm_attachment = JvmAttachment::new(self.jvm.jvm());
-
-                    (**jvm_attachment.jni_environment()).GetArrayLength.unwrap()(
-                        jvm_attachment.jni_environment(),
+                    (**self.jvm_attachment.jni_environment()).GetArrayLength.unwrap()(
+                        self.jvm_attachment.jni_environment(),
                         self.jvm_ptr
                     )
                 };

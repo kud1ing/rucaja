@@ -41,6 +41,7 @@ pub use jvm::{
     jvalue_from_jshort,
     Jvm
 };
+pub use jvm_attachment::JvmAttachment;
 pub use jvm_array::JvmArray;
 pub use jvm_boolean_array::JvmBooleanArray;
 pub use jvm_byte_array::JvmByteArray;

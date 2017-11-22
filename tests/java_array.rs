@@ -1,6 +1,6 @@
 extern crate rucaja;
 
-use rucaja::{Jvm, JvmMethod, JvmObjectArray, JvmObject, jvalue_from_jobject, jvalue_from_jint};
+use rucaja::{Jvm, JvmAttachment, JvmClass, JvmMethod, JvmObjectArray, JvmObject, jvalue_from_jobject, jvalue_from_jint};
 
 #[test]
 fn test_java_arrays() {
@@ -9,15 +9,19 @@ fn test_java_arrays() {
             "-Xcheck:jni"
         ]);
 
-        let integer_clazz = jvm.get_class("java/lang/Integer").unwrap();
+        // Attach the current native thread to the JVM.
+        let jvm_attachment = JvmAttachment::new(jvm.jvm());
+
+        let integer_clazz = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
 
         let integer_constructor = JvmMethod::get_constructor(
-            &jvm,
+            &jvm_attachment,
             &integer_clazz,
             "(I)V"
         ).unwrap();
 
-        let integer_jvm_ptr = jvm.call_constructor(
+        let integer_jvm_ptr = JvmMethod::call_constructor(
+            &jvm_attachment,
             &integer_clazz,
             &integer_constructor,
             vec![
@@ -25,12 +29,12 @@ fn test_java_arrays() {
             ].as_ptr()
         );
 
-        let integer_object = JvmObject::from_jvm_ptr(&jvm, integer_jvm_ptr).unwrap();
+        let integer_object = JvmObject::from_jvm_ptr(&jvm_attachment, integer_jvm_ptr).unwrap();
 
-        let arrays_clazz = jvm.get_class("java/util/Arrays").unwrap();
+        let arrays_clazz = JvmClass::get_class(&jvm_attachment, "java/util/Arrays").unwrap();
 
         let binary_search_method = JvmMethod::get_static_method(
-            &jvm,
+            &jvm_attachment,
             &arrays_clazz,
             "binarySearch",
             "([Ljava/lang/Object;Ljava/lang/Object;)I"
@@ -39,13 +43,14 @@ fn test_java_arrays() {
         let array_length = 10;
 
         let integer_array_object = JvmObjectArray::new(
-            &jvm,
+            &jvm_attachment,
             array_length,
             &integer_clazz,
             &integer_object
         ).unwrap();
 
-        let result = jvm.call_static_int_method(
+        let result = JvmMethod::call_static_int_method(
+            &jvm_attachment,
             &arrays_clazz,
             &binary_search_method,
             vec![

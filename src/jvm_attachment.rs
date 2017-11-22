@@ -5,6 +5,7 @@ use std::os::raw::c_void;
 // =================================================================================================
 
 /// A native thread's attachment to an embedded JVM.
+/// There should be only exactly one `JvmAttachment` instance at the same time.
 /// The thread is automatically detached when `JvmAttachment` goes out of scope (RAII).
 pub struct JvmAttachment {
 
