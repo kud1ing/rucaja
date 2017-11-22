@@ -37,7 +37,7 @@ fn main() {
             "(Ljava/lang/Object;)V"
         ).expect("Could not find JVM method");
 
-        create_a_java_string(&jvm, &class, &println);
+        create_a_java_string(&jvm_attachment, &class, &println);
 
         // Call some Java methods from `Test.class`.
         call_static_boolean_method(&jvm_attachment, &class);
@@ -130,13 +130,10 @@ fn call_static_void_method(jvm_attachment: &JvmAttachment, class: &JvmClass) {
 }
 
 /// Creates a Java string.
-fn create_a_java_string(jvm: &Jvm, class: &JvmClass, println: &JvmMethod) {
+fn create_a_java_string(jvm_attachment: &JvmAttachment, class: &JvmClass, println: &JvmMethod) {
 
     unsafe {
         println!("* `create_a_java_string()`");
-
-        // Attach the current native thread to the JVM.
-        let jvm_attachment = JvmAttachment::new(jvm.jvm());
 
         // Create a Java string.
         let jvm_string = JvmString::new(&jvm_attachment, "Hello World").expect("Could not create a string");
