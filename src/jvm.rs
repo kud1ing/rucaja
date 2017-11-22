@@ -365,12 +365,6 @@ impl Jvm {
 
         JvmClass::from_jvm_ptr(self, jvm_class_ptr)
     }
-
-    /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
-    pub unsafe fn get_constructor(&self, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
-
-        JvmMethod::get_method(self, jvm_class, "<init>", jvm_method_signature)
-    }
 }
 
 // =================================================================================================

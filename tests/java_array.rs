@@ -11,7 +11,8 @@ fn test_java_arrays() {
 
         let integer_clazz = jvm.get_class("java/lang/Integer").unwrap();
 
-        let integer_constructor = jvm.get_constructor(
+        let integer_constructor = JvmMethod::get_constructor(
+            &jvm,
             &integer_clazz,
             "(I)V"
         ).unwrap();

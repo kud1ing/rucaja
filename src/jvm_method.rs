@@ -14,6 +14,12 @@ pub struct JvmMethod {
 
 impl JvmMethod {
 
+    /// Tries to resolve the JVM constructor with the given signature in the given JVM class.
+    pub unsafe fn get_constructor(jvm: &Jvm, jvm_class: &JvmClass, jvm_method_signature: &str) -> Option<JvmMethod> {
+
+        JvmMethod::get_method(jvm, jvm_class, "<init>", jvm_method_signature)
+    }
+
     /// Tries to resolve the JVM method with the given name and signature in the given JVM class.
     pub unsafe fn get_method(
         jvm: &Jvm, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
