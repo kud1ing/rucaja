@@ -20,15 +20,19 @@ pub struct JvmAttachment {
 impl JvmAttachment {
 
     ///
-    pub fn new(jvm: *mut JavaVM) -> JvmAttachment {
+    pub fn new(jvm: *mut JavaVM) -> Option<JvmAttachment> {
 
         // Initialize the data.
         let mut jvm_attachment = JvmAttachment {
             jni_environment: ptr::null_mut(),
-            jvm: jvm,
+            jvm,
         };
 
         unsafe {
+            if (**jvm).AttachCurrentThread.is_none() {
+                return None
+            }
+
             // Try to attach the current native thread to an embedded JVM.
             let _ = (**jvm).AttachCurrentThread.unwrap()(
                 jvm,
@@ -39,7 +43,7 @@ impl JvmAttachment {
 
         // TODO: interpret the result
 
-        jvm_attachment
+        Some(jvm_attachment)
     }
 
     ///

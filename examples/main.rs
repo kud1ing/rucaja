@@ -23,7 +23,7 @@ fn main() {
     let jvm = Jvm::new(&jvm_options);
 
     // Attach the current native thread to the JVM.
-    let jvm_attachment = JvmAttachment::new(jvm.jvm());
+    let jvm_attachment = JvmAttachment::new(jvm.jvm()).unwrap();
 
     // Get the Java class `Test` from `Test.class`.
     let class = JvmClass::get_class(&jvm_attachment, "Test").expect("Could not find JVM class");

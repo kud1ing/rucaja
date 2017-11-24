@@ -10,7 +10,7 @@ fn test_java_arrays() {
     ]);
 
     // Attach the current native thread to the JVM.
-    let jvm_attachment = JvmAttachment::new(jvm.jvm());
+    let jvm_attachment = JvmAttachment::new(jvm.jvm()).unwrap();
 
     let jvm_integer_class = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
 
