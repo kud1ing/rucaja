@@ -136,7 +136,7 @@ impl<'a> JvmMethod {
     ) -> Option<JvmObject<'a>> {
 
         let result = unsafe {
-            (**jvm_attachment.jni_environment()).CallStaticObjectMethodA.unwrap()(
+            (**jvm_attachment.jni_environment()).CallStaticObjectMethodA?(
                 jvm_attachment.jni_environment(),
                 jvm_class.jvm_ptr(),
                 jvm_method.jvm_ptr(),
@@ -183,7 +183,7 @@ impl<'a> JvmMethod {
 
         let jvm_method_ptr = unsafe {
 
-                (**jvm_attachment.jni_environment()).GetMethodID.unwrap()(
+                (**jvm_attachment.jni_environment()).GetMethodID?(
                     jvm_attachment.jni_environment(),
                     jvm_class.jvm_ptr(),
                     jvm_method_name_cstring.as_ptr(),
@@ -207,7 +207,7 @@ impl<'a> JvmMethod {
 
         let jvm_method_ptr = unsafe {
 
-                (**jvm_attachment.jni_environment()).GetStaticMethodID.unwrap()(
+                (**jvm_attachment.jni_environment()).GetStaticMethodID?(
                     jvm_attachment.jni_environment(),
                     jvm_class.jvm_ptr(),
                     jvm_method_name_cstring.as_ptr(),

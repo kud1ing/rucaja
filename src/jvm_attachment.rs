@@ -29,12 +29,8 @@ impl JvmAttachment {
         };
 
         unsafe {
-            if (**jvm).AttachCurrentThread.is_none() {
-                return None
-            }
-
             // Try to attach the current native thread to an embedded JVM.
-            let _ = (**jvm).AttachCurrentThread.unwrap()(
+            let _ = (**jvm).AttachCurrentThread?(
                 jvm,
                 (&mut jvm_attachment.jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
                 ptr::null_mut(),

@@ -130,6 +130,7 @@ impl Jvm {
     /// }
     /// ```
     pub fn new(jvm_option_strings: &[&str]) -> Jvm {
+
         // Wrap the JVM option string slices in a vector of `CString`s.
         let mut jvm_option_cstrings: Vec<CString> = Vec::new();
 

@@ -17,7 +17,7 @@ impl<'a>  JvmString<'a>  {
         let string_as_cstring = CString::new(string).unwrap();
 
         let jvm_string_ptr = unsafe {
-            (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
+            (**jvm_attachment.jni_environment()).NewStringUTF?(
                 jvm_attachment.jni_environment(),
                 string_as_cstring.as_ptr()
             )

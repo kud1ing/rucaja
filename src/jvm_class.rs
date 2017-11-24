@@ -13,8 +13,8 @@ impl<'a>  JvmClass<'a> {
 
         let jvm_class_name_cstring = CString::new(jvm_class_name).unwrap();
 
-        let jvm_class_ptr =unsafe {
-            (**jvm_attachment.jni_environment()).FindClass.unwrap()(
+        let jvm_class_ptr = unsafe {
+            (**jvm_attachment.jni_environment()).FindClass?(
                 jvm_attachment.jni_environment(),
                 jvm_class_name_cstring.as_ptr()
             )

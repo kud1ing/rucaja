@@ -30,7 +30,7 @@ macro_rules! jvm_wrapper {
 
                     // Hold a global JVM reference to the given JVM object, in order to prevent
                     // the JVM GC from claiming it.
-                    (**jvm_attachment.jni_environment()).NewGlobalRef.unwrap()(
+                    (**jvm_attachment.jni_environment()).NewGlobalRef?(
                         jvm_attachment.jni_environment(),
                         jvm_ptr
                     )
