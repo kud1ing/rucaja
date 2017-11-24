@@ -12,11 +12,11 @@ fn test_java_integers() {
         // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(jvm.jvm());
 
-        let integer_clazz = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
+        let jvm_integer_class = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
 
         let parse_int_method = JvmMethod::get_static_method(
             &jvm_attachment,
-            &integer_clazz,
+            &jvm_integer_class,
             "parseInt",
             "(Ljava/lang/String;)I"
         ).unwrap();
@@ -26,7 +26,7 @@ fn test_java_integers() {
 
             let jvm_int = JvmMethod::call_static_int_method(
                 &jvm_attachment,
-                &integer_clazz,
+                &jvm_integer_class,
                 &parse_int_method,
                 vec![
                     jvalue_from_jobject(jvm_string.jvm_ptr())

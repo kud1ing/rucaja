@@ -12,17 +12,17 @@ fn test_java_arrays() {
         // Attach the current native thread to the JVM.
         let jvm_attachment = JvmAttachment::new(jvm.jvm());
 
-        let integer_clazz = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
+        let jvm_integer_class = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
 
         let integer_constructor = JvmMethod::get_constructor(
             &jvm_attachment,
-            &integer_clazz,
+            &jvm_integer_class,
             "(I)V"
         ).unwrap();
 
         let integer_jvm_ptr = JvmMethod::call_constructor(
             &jvm_attachment,
-            &integer_clazz,
+            &jvm_integer_class,
             &integer_constructor,
             vec![
                 jvalue_from_jint(42)
@@ -31,11 +31,11 @@ fn test_java_arrays() {
 
         let integer_object = JvmObject::from_jvm_ptr(&jvm_attachment, integer_jvm_ptr).unwrap();
 
-        let arrays_clazz = JvmClass::get_class(&jvm_attachment, "java/util/Arrays").unwrap();
+        let jvm_arrays_class = JvmClass::get_class(&jvm_attachment, "java/util/Arrays").unwrap();
 
         let binary_search_method = JvmMethod::get_static_method(
             &jvm_attachment,
-            &arrays_clazz,
+            &jvm_arrays_class,
             "binarySearch",
             "([Ljava/lang/Object;Ljava/lang/Object;)I"
         ).unwrap();
@@ -45,13 +45,13 @@ fn test_java_arrays() {
         let integer_array_object = JvmObjectArray::new(
             &jvm_attachment,
             array_length,
-            &integer_clazz,
+            &jvm_integer_class,
             &integer_object
         ).unwrap();
 
         let result = JvmMethod::call_static_int_method(
             &jvm_attachment,
-            &arrays_clazz,
+            &jvm_arrays_class,
             &binary_search_method,
             vec![
                 jvalue_from_jobject(integer_array_object.jvm_ptr()),

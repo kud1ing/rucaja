@@ -4,8 +4,8 @@ use jni_sys::{
     jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
 };
 use std::ffi::CString;
-use std::ptr;
 use std::os::raw::c_void;
+use std::ptr;
 
 // =================================================================================================
 
