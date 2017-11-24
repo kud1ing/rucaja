@@ -22,8 +22,7 @@ mod jvm_object_array;
 mod jvm_short_array;
 mod jvm_string;
 mod jvm_throwable;
-
-mod util;
+mod jvm_type_signature;
 
 pub use jni_sys::{
     jarray, jboolean, jbooleanArray, jbyte, jbyteArray, jchar, jcharArray, jdouble, jdoubleArray,

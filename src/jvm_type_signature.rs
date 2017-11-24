@@ -2,7 +2,7 @@
 
 /// Utility enum for representing JVM method types.
 /// TODO Move this somewhere better so that it's more descriptive.
-pub enum JType {
+pub enum JvmType {
     Boolean,
     Byte,
     Char,
@@ -14,12 +14,13 @@ pub enum JType {
     /// On the left is the package componenets, on the right is the class name itself.
     Class(Vec<String>, String),
     /// Makes it an array of the type.
-    Array(Box<JType>) // Boxed because sizing is silly.
+    Array(Box<JvmType>) // Boxed because sizing is silly.
 }
 
-impl Into<String> for JType {
+// TODO: `Into<String>` or `ToString`?
+impl Into<String> for JvmType {
     fn into(self) -> String {
-        use self::JType::*;
+        use self::JvmType::*;
         match self {
             Boolean => "Z".into(),
             Byte => "B".into(),
@@ -38,7 +39,7 @@ impl Into<String> for JType {
                 format!("L{}{};", pp, cls)
             },
             Array(at) => {
-                let jt: JType = *at; // It's yelling at me about type annotations.
+                let jt: JvmType = *at; // It's yelling at me about type annotations.
                 let s: String = jt.into();
                 format!("[{}", s)
             }
@@ -47,7 +48,7 @@ impl Into<String> for JType {
 }
 
 /// Computes the JVM name for the method type specified by the arguments.
-pub fn compute_jvm_method_signature(ret: Option<JType>, args: Vec<JType>) -> String {
+pub fn compute_jvm_method_signature(ret: Option<JvmType>, args: Vec<JvmType>) -> String {
 
     let mut a = String::new();
     for arg in args {
@@ -65,7 +66,7 @@ pub fn compute_jvm_method_signature(ret: Option<JType>, args: Vec<JType>) -> Str
 #[cfg(test)]
 mod tests {
 
-    use super::JType;
+    use super::JvmType;
     use super::compute_jvm_method_signature;
 
     #[test]
@@ -79,11 +80,11 @@ mod tests {
         // long f (int n, String s, int[] arr); // (from the JNI docs)
         assert_eq!(
             compute_jvm_method_signature(
-                Some(JType::Long),
+                Some(JvmType::Long),
                 vec![
-                    JType::Int,
-                    JType::Class(vec!["java".into(), "lang".into()], "String".into()),
-                    JType::Array(Box::new(JType::Int))]),
+                    JvmType::Int,
+                    JvmType::Class(vec!["java".into(), "lang".into()], "String".into()),
+                    JvmType::Array(Box::new(JvmType::Int))]),
             String::from("(ILjava/lang/String;[I)J"))
     }
 
