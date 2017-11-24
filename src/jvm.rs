@@ -16,63 +16,67 @@ extern {
 // =================================================================================================
 
 /// Wraps a `jboolean` in a `jvalue`.
-pub unsafe fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
+pub fn jvalue_from_jboolean(arg: jboolean) -> jvalue {
     jvalue { z: arg }
 }
 
 /// Wraps a `jbyte` in a `jvalue`.
-pub unsafe fn jvalue_from_jbyte(arg: jbyte) -> jvalue {
+pub fn jvalue_from_jbyte(arg: jbyte) -> jvalue {
     jvalue { b: arg }
 }
 
 /// Wraps a `jchar` in a `jvalue`.
-pub unsafe fn jvalue_from_jchar(arg: jchar) -> jvalue {
+pub fn jvalue_from_jchar(arg: jchar) -> jvalue {
     jvalue { c: arg }
 }
 
 /// Wraps a `jdouble` in a `jvalue`.
-pub unsafe fn jvalue_from_jdouble(arg: jdouble) -> jvalue {
+pub fn jvalue_from_jdouble(arg: jdouble) -> jvalue {
     jvalue { d: arg }
 }
 
 /// Wraps a `jint` in a `jvalue`.
-pub unsafe fn jvalue_from_jint(arg: jint) -> jvalue {
+pub fn jvalue_from_jint(arg: jint) -> jvalue {
     jvalue { i: arg }
 }
 
 /// Wraps a `jfloat` in a `jvalue`.
-pub unsafe fn jvalue_from_jfloat(arg: jfloat) -> jvalue {
+pub fn jvalue_from_jfloat(arg: jfloat) -> jvalue {
     jvalue { f: arg }
 }
 
 /// Wraps a `jlong` in a `jvalue`.
-pub unsafe fn jvalue_from_jlong(arg: jlong) -> jvalue {
+pub fn jvalue_from_jlong(arg: jlong) -> jvalue {
     jvalue { j: arg }
 }
 
 /// Wraps a `jobject` in a `jvalue`.
-pub unsafe fn jvalue_from_jobject(arg: jobject) -> jvalue {
+pub fn jvalue_from_jobject(arg: jobject) -> jvalue {
     jvalue { l: arg }
 }
 
 /// Wraps a `jshort` in a `jvalue`.
-pub unsafe fn jvalue_from_jshort(arg: jshort) -> jvalue {
+pub fn jvalue_from_jshort(arg: jshort) -> jvalue {
     jvalue { s: arg }
 }
 
 ///
-pub unsafe fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
-    return !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null()
+pub fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
+    return unsafe {
+        !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null()
+    }
 }
 
 ///
-pub unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
+pub fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
     // A JVM exception occurred.
     if jvm_exception_occured(jni_environment) {
 
-        // Print the JVM exception.
-        (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
+        unsafe {
+            // Print the JVM exception.
+            (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
+        }
 
         // Panic.
         panic!("An exception occurred");
@@ -80,13 +84,15 @@ pub unsafe fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 }
 
 ///
-pub unsafe fn print_jvm_exception(jni_environment: *mut JNIEnv) {
+pub fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
     // A JVM exception occurred.
     if jvm_exception_occured(jni_environment) {
 
-        // Print the JVM exception.
-        (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
+        unsafe {
+            // Print the JVM exception.
+            (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
+        }
     };
 }
 
@@ -119,24 +125,22 @@ impl Jvm {
     ///
     /// ```
     /// use rucaja::Jvm;
-    /// unsafe {
+    /// {
     ///   Jvm::new(&["-Xcheck:jni"]);
     /// }
     /// ```
-    pub unsafe fn new(jvm_option_strings: &[&str]) -> Jvm {
-
+    pub fn new(jvm_option_strings: &[&str]) -> Jvm {
         // Wrap the JVM option string slices in a vector of `CString`s.
-        let mut jvm_option_cstrings : Vec<CString> = Vec::new();
+        let mut jvm_option_cstrings: Vec<CString> = Vec::new();
 
         for jvm_option_string in jvm_option_strings {
             jvm_option_cstrings.push(CString::new(*jvm_option_string).unwrap());
         }
 
         // Create a vector of `JavaVMOption`s, each referencing a `CString`.
-        let mut jvm_options : Vec<JavaVMOption> = Vec::new();
+        let mut jvm_options: Vec<JavaVMOption> = Vec::new();
 
         for jvm_option_cstring in &jvm_option_cstrings {
-
             let jvm_option = JavaVMOption {
                 optionString: jvm_option_cstring.as_ptr() as *mut i8,
                 extraInfo: ptr::null_mut() as *mut c_void
@@ -155,14 +159,16 @@ impl Jvm {
 
         // Initialize space for a pointer to the JNI environment.
         let mut jvm: *mut JavaVM = ptr::null_mut();
-        let mut jni_environment : *mut JNIEnv = ptr::null_mut();
+        let mut jni_environment: *mut JNIEnv = ptr::null_mut();
 
         // Try to instantiate the JVM.
-        let result = JNI_CreateJavaVM(
-            &mut jvm,
-            (&mut jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
-            (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
-        );
+        let result = unsafe {
+            JNI_CreateJavaVM(
+                &mut jvm,
+                (&mut jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
+                (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
+            )
+        };
 
         // There was an error while trying to instantiate the JVM.
         if result != JNI_OK {

@@ -12,14 +12,16 @@ jvm_wrapper!(JvmString, jstring);
 impl<'a>  JvmString<'a>  {
 
     /// Creates and returns a JVM string.
-    pub unsafe fn new(jvm_attachment: &'a JvmAttachment, string: &str) -> Option<JvmString<'a>> {
+    pub fn new(jvm_attachment: &'a JvmAttachment, string: &str) -> Option<JvmString<'a>> {
 
         let string_as_cstring = CString::new(string).unwrap();
 
-        let jvm_string_ptr = (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
-            jvm_attachment.jni_environment(),
-            string_as_cstring.as_ptr()
-        );
+        let jvm_string_ptr = unsafe {
+            (**jvm_attachment.jni_environment()).NewStringUTF.unwrap()(
+                jvm_attachment.jni_environment(),
+                string_as_cstring.as_ptr()
+            )
+        };
 
         JvmString::from_jvm_ptr(jvm_attachment, jvm_string_ptr)
     }
