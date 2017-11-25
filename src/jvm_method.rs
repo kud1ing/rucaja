@@ -178,8 +178,8 @@ impl<'a> JvmMethod {
         jvm_attachment: &JvmAttachment, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
-        let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
-        let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
+        let jvm_method_name_cstring = CString::new(jvm_method_name).ok()?;
+        let jvm_method_signature_cstring = CString::new(jvm_method_signature).ok()?;
 
         let jvm_method_ptr = unsafe {
 
@@ -202,8 +202,8 @@ impl<'a> JvmMethod {
         jvm_attachment: &JvmAttachment, jvm_class: &JvmClass, jvm_method_name: &str, jvm_method_signature: &str
     ) -> Option<JvmMethod> {
 
-        let jvm_method_name_cstring = CString::new(jvm_method_name).unwrap();
-        let jvm_method_signature_cstring = CString::new(jvm_method_signature).unwrap();
+        let jvm_method_name_cstring = CString::new(jvm_method_name).ok()?;
+        let jvm_method_signature_cstring = CString::new(jvm_method_signature).ok()?;
 
         let jvm_method_ptr = unsafe {
 

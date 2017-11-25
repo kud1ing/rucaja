@@ -14,7 +14,7 @@ impl<'a>  JvmString<'a>  {
     /// Creates and returns a JVM string.
     pub fn new(jvm_attachment: &'a JvmAttachment, string: &str) -> Option<JvmString<'a>> {
 
-        let string_as_cstring = CString::new(string).unwrap();
+        let string_as_cstring = CString::new(string).ok()?;
 
         let jvm_string_ptr = unsafe {
             (**jvm_attachment.jni_environment()).NewStringUTF?(
