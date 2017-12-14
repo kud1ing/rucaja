@@ -15,35 +15,37 @@ pub enum JvmType {
     Short,
 }
 
-// TODO: `Into<String>` or `ToString`?
-impl Into<String> for JvmType {
 
-    fn into(self) -> String {
+/// Builds the JVM type signature string.
+fn jvm_signature_string(jvm_type: &JvmType) -> String {
 
-        use self::JvmType::*;
+    match *jvm_type {
+        JvmType::Boolean => String::from("Z"),
+        JvmType::Byte => String::from("B"),
+        JvmType::Char => String::from("C"),
+        JvmType::Short => String::from("S"),
+        JvmType::Int => String::from("I"),
+        JvmType::Long => String::from("J"),
+        JvmType::Float => String::from("F"),
+        JvmType::Double => String::from("D"),
+        JvmType::Class{ref package_components, ref class_name} => {
 
-        match self {
-            Boolean => "Z".into(),
-            Byte => "B".into(),
-            Char => "C".into(),
-            Short => "S".into(),
-            Int => "I".into(),
-            Long => "J".into(),
-            Float => "F".into(),
-            Double => "D".into(),
-            Class{package_components: pkg, class_name: cls} => {
-                let mut pp = String::new();
-                for n in pkg {
-                    pp.push_str(n.as_str());
-                    pp.push('/');
-                }
-                format!("L{}{};", pp, cls)
-            },
-            Array(at) => {
-                let jt: JvmType = *at; // It's yelling at me about type annotations.
-                let s: String = jt.into();
-                format!("[{}", s)
+            let mut class_signature_string = String::from("L");
+
+            // Iterate over the package components.
+            for package_component in package_components {
+                class_signature_string.push_str(package_component.as_str());
+                class_signature_string.push('/');
             }
+
+            // Add the class name.
+            class_signature_string.push_str(class_name);
+            class_signature_string.push_str(";");
+
+            class_signature_string
+        },
+        JvmType::Array(ref jvm_array_type) => {
+            format!("[{}", jvm_signature_string(&jvm_array_type))
         }
     }
 }
@@ -54,16 +56,24 @@ pub fn jvm_method_signature_string(
     jvm_method_return_type: Option<JvmType>
 ) -> String {
 
-    let mut a = String::new();
+    let mut method_signature_string = String::from("(");
 
-    for arg in jvm_method_argument_types {
-        let rep: String = arg.into();
-        a.push_str(rep.as_str());
+    // Iterate over the JVM method arguments.
+    for jvm_method_argument_type in jvm_method_argument_types {
+        let rep: String = jvm_signature_string(&jvm_method_argument_type);
+        method_signature_string.push_str(rep.as_str());
     }
 
-    let rrep: String = jvm_method_return_type.map_or("".into(), |t| t.into());
+    method_signature_string.push_str(")");
 
-    format!("({}){}", a, rrep)
+    // Build the return type signature string.
+    let return_type_signature: String = jvm_method_return_type.map_or(
+        String::from(""),
+        |t| jvm_signature_string(&t)
+    );
+    method_signature_string.push_str(&return_type_signature);
+
+    method_signature_string
 }
 
 
@@ -74,7 +84,7 @@ mod tests {
     use super::jvm_method_signature_string;
 
     #[test]
-    fn test_jvm_methods() {
+    fn test_jvm_method_signature_string() {
 
         assert_eq!(
             // `void foo()`
@@ -88,8 +98,8 @@ mod tests {
                 vec![
                     JvmType::Int,
                     JvmType::Class{
-                        package_components: vec!["java".into(), "lang".into()],
-                        class_name: "String".into()
+                        package_components: vec![String::from("java"), String::from("lang")],
+                        class_name: String::from("String")
                     },
                     JvmType::Array(Box::new(JvmType::Int))
                 ],
