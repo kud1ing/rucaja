@@ -17,7 +17,7 @@ pub enum JvmType {
 
 
 /// Builds the JVM type signature string.
-fn jvm_signature_string(jvm_type: &JvmType) -> String {
+pub fn jvm_signature_string(jvm_type: &JvmType) -> String {
 
     match *jvm_type {
         JvmType::Boolean => String::from("Z"),
