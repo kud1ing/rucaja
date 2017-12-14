@@ -1,22 +1,18 @@
 #![allow(dead_code)] // FIXME Remove this later.
 
-/// Utility enum for representing JVM method types.
-/// TODO Move this somewhere better so that it's more descriptive.
+/// Represents a JVM type.
 pub enum JvmType {
+
+    Array(Box<JvmType>),
     Boolean,
     Byte,
     Char,
-    Short,
+    Class{package_components: Vec<String>, class_name: String},
+    Double,
+    Float,
     Int,
     Long,
-    Float,
-    Double,
-
-    /// On the left is the package components, on the right is the class name itself.
-    Class(Vec<String>, String),
-
-    /// Makes it an array of the type.
-    Array(Box<JvmType>) // Boxed because sizing is silly.
+    Short,
 }
 
 // TODO: `Into<String>` or `ToString`?
@@ -35,7 +31,7 @@ impl Into<String> for JvmType {
             Long => "J".into(),
             Float => "F".into(),
             Double => "D".into(),
-            Class(pkg, cls) => {
+            Class{package_components: pkg, class_name: cls} => {
                 let mut pp = String::new();
                 for n in pkg {
                     pp.push_str(n.as_str());
@@ -52,46 +48,52 @@ impl Into<String> for JvmType {
     }
 }
 
-/// Computes the JVM name for the method type specified by the arguments.
-pub fn compute_jvm_method_signature(ret: Option<JvmType>, args: Vec<JvmType>) -> String {
+/// Builds the JVM method signature string.
+pub fn jvm_method_signature_string(
+    jvm_method_argument_types: Vec<JvmType>,
+    jvm_method_return_type: Option<JvmType>
+) -> String {
 
     let mut a = String::new();
 
-    for arg in args {
-        let rep: String = arg.into(); // Still complaining about type annotations.
+    for arg in jvm_method_argument_types {
+        let rep: String = arg.into();
         a.push_str(rep.as_str());
     }
 
-    let rrep: String = ret.map_or("".into(), |t| t.into());
+    let rrep: String = jvm_method_return_type.map_or("".into(), |t| t.into());
 
     format!("({}){}", a, rrep)
 }
 
-// TODO Write a macro that wraps the call to compute_jvm_method_signature, because it's still ugly.
 
 #[cfg(test)]
 mod tests {
 
     use super::JvmType;
-    use super::compute_jvm_method_signature;
+    use super::jvm_method_signature_string;
 
     #[test]
     fn test_jvm_methods() {
 
-        // `void foo()`
         assert_eq!(
-            compute_jvm_method_signature(None, vec![]),
+            // `void foo()`
+            jvm_method_signature_string(vec![], None),
             String::from("()")
         );
 
-        // `long f(int n, String s, int[] arr)`
         assert_eq!(
-            compute_jvm_method_signature(
-                Some(JvmType::Long),
+            // `long f(int, String, int[])`
+            jvm_method_signature_string(
                 vec![
                     JvmType::Int,
-                    JvmType::Class(vec!["java".into(), "lang".into()], "String".into()),
-                    JvmType::Array(Box::new(JvmType::Int))]
+                    JvmType::Class{
+                        package_components: vec!["java".into(), "lang".into()],
+                        class_name: "String".into()
+                    },
+                    JvmType::Array(Box::new(JvmType::Int))
+                ],
+                Some(JvmType::Long),
             ),
             String::from("(ILjava/lang/String;[I)J")
         );

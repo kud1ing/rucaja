@@ -2,7 +2,7 @@
 macro_rules! jvm_wrapper {
     ($rust_struct_name:ident, $java_type:ident) => (
 
-        /// The Rust wrapper for the corresponding JVM class.
+        /// The Rust wrapper for the corresponding JVM object.
         pub struct $rust_struct_name<'a> {
 
             // A reference to the JVM attachment.
@@ -14,7 +14,7 @@ macro_rules! jvm_wrapper {
 
         impl<'a> $rust_struct_name<'a> {
 
-            /// Returns the pointer of the JVM object.
+            /// Returns the pointer of the wrapped JVM object.
             pub fn jvm_ptr(&self) -> $java_type {
                 self.jvm_ptr
             }
