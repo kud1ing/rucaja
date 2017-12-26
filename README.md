@@ -2,13 +2,14 @@
 
 Calling JVM code from Rust via JNI.
 
+## Usage
 
-## Status
+JNI calls are about 10-20 times slower than regular JVM instructions.
+It is adviced to call as few functions as possible that do as much work as possible.
 
-Creating a flat Java wrapper class and producing a fat JAR with all the dependencies reduces the Rust interface code.
+Creating a flat Java wrapper class and producing a fat JAR with all the dependencies also reduces the amount of Rust interface code.
 
 A more complete example is [kud1ing/tinkerpop-rs](https://github.com/kud1ing/tinkerpop-rs) which uses Rucaja to call [Apache TinkerPop](https://tinkerpop.apache.org).
-
 
 ## Platforms
 
