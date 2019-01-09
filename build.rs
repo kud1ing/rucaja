@@ -20,7 +20,9 @@ fn find_default_java_home() -> String {
 
 fn main() {
     // Try to determine the Java home directory so that we can link to `libjvm`.
-    let java_home = env::var("JAVA_HOME").ok().unwrap_or(find_default_java_home());
+    let java_home = env::var("JAVA_HOME")
+        .ok()
+        .unwrap_or(find_default_java_home());
 
     // TODO: Why is this necessary?
     print!("cargo:rustc-link-search=native=");

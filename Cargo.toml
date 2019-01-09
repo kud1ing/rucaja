@@ -3,6 +3,7 @@ authors = ["Lennart Kudling"]
 build = "build.rs"
 description = "Rust Calls Java - via JNI"
 documentation = "https://docs.rs/crate/rucaja"
+edition="2018"
 keywords = ["java", "jni"]
 license = "MIT/Apache-2.0"
 links = "jvm"

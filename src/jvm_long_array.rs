@@ -1,4 +1,4 @@
-use jni_sys::{ jlongArray, jsize };
-use jvm_attachment::JvmAttachment;
+use crate::jvm_attachment::JvmAttachment;
+use jni_sys::{jlongArray, jsize};
 
 jvm_array_wrapper!(JvmLongArray, jlongArray);

@@ -1,32 +1,27 @@
 extern crate rucaja;
 
-use rucaja::{Jvm, JvmAttachment, JvmClass, JvmMethod, JvmObjectArray, JvmObject, jvalue_from_jobject, jvalue_from_jint};
+use rucaja::{
+    jvalue_from_jint, jvalue_from_jobject, Jvm, JvmAttachment, JvmClass, JvmMethod, JvmObject,
+    JvmObjectArray,
+};
 
 #[test]
 fn test_java_arrays() {
-
-    let jvm = Jvm::new(&[
-        "-Xcheck:jni"
-    ]);
+    let jvm = Jvm::new(&["-Xcheck:jni"]);
 
     // Attach the current native thread to the JVM.
     let jvm_attachment = JvmAttachment::new(jvm.jvm()).unwrap();
 
     let jvm_integer_class = JvmClass::get_class(&jvm_attachment, "java/lang/Integer").unwrap();
 
-    let integer_constructor = JvmMethod::get_constructor(
-        &jvm_attachment,
-        &jvm_integer_class,
-        "(I)V"
-    ).unwrap();
+    let integer_constructor =
+        JvmMethod::get_constructor(&jvm_attachment, &jvm_integer_class, "(I)V").unwrap();
 
     let integer_jvm_ptr = JvmMethod::call_constructor(
         &jvm_attachment,
         &jvm_integer_class,
         &integer_constructor,
-        vec![
-            jvalue_from_jint(42)
-        ].as_ptr()
+        vec![jvalue_from_jint(42)].as_ptr(),
     );
 
     let integer_object = JvmObject::from_jvm_ptr(&jvm_attachment, integer_jvm_ptr).unwrap();
@@ -37,8 +32,9 @@ fn test_java_arrays() {
         &jvm_attachment,
         &jvm_arrays_class,
         "binarySearch",
-        "([Ljava/lang/Object;Ljava/lang/Object;)I"
-    ).unwrap();
+        "([Ljava/lang/Object;Ljava/lang/Object;)I",
+    )
+    .unwrap();
 
     let array_length = 10;
 
@@ -46,8 +42,9 @@ fn test_java_arrays() {
         &jvm_attachment,
         array_length,
         &jvm_integer_class,
-        &integer_object
-    ).unwrap();
+        &integer_object,
+    )
+    .unwrap();
 
     let result = JvmMethod::call_static_int_method(
         &jvm_attachment,
@@ -55,9 +52,10 @@ fn test_java_arrays() {
         &binary_search_method,
         vec![
             jvalue_from_jobject(integer_array_object.jvm_ptr()),
-            jvalue_from_jobject(integer_object.jvm_ptr())
-        ].as_ptr()
+            jvalue_from_jobject(integer_object.jvm_ptr()),
+        ]
+        .as_ptr(),
     );
 
-    assert!( 0 <= result && result < array_length);
+    assert!(0 <= result && result < array_length);
 }

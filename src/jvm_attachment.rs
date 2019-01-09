@@ -1,6 +1,6 @@
-use jni_sys::{JavaVM, JNIEnv};
-use std::ptr;
+use jni_sys::{JNIEnv, JavaVM};
 use std::os::raw::c_void;
+use std::ptr;
 
 // =================================================================================================
 
@@ -8,7 +8,6 @@ use std::os::raw::c_void;
 /// There should be only exactly one `JvmAttachment` instance at the same time.
 /// The thread is automatically detached when `JvmAttachment` goes out of scope (RAII).
 pub struct JvmAttachment {
-
     /// The JNI environment.
     jni_environment: *mut JNIEnv,
 
@@ -16,12 +15,9 @@ pub struct JvmAttachment {
     jvm: *mut JavaVM,
 }
 
-
 impl JvmAttachment {
-
     ///
     pub fn new(jvm: *mut JavaVM) -> Option<JvmAttachment> {
-
         // Initialize the data.
         let mut jvm_attachment = JvmAttachment {
             jni_environment: ptr::null_mut(),
@@ -51,14 +47,10 @@ impl JvmAttachment {
 // =================================================================================================
 
 impl Drop for JvmAttachment {
-
     fn drop(&mut self) {
-
         unsafe {
             // Try to detach the current native thread from the embedded JVM.
-            let _ = (**self.jvm).DetachCurrentThread.unwrap()(
-                self.jvm,
-            );
+            let _ = (**self.jvm).DetachCurrentThread.unwrap()(self.jvm);
 
             // TODO: interpret the result
         }

@@ -1,7 +1,7 @@
 use jni_sys::{
-    JavaVM, JavaVMInitArgs, JavaVMOption, JNI_CreateJavaVM, JNI_ERR, JNI_EDETACHED, JNI_EVERSION,
-    JNI_ENOMEM, JNI_EEXIST, JNI_EINVAL, JNI_FALSE, JNI_OK, JNI_VERSION_1_8, JNIEnv, jboolean, jbyte,
-    jchar, jint, jdouble, jfloat, jlong, jobject, jshort, jvalue
+    jboolean, jbyte, jchar, jdouble, jfloat, jint, jlong, jobject, jshort, jvalue, JNIEnv,
+    JNI_CreateJavaVM, JavaVM, JavaVMInitArgs, JavaVMOption, JNI_EDETACHED, JNI_EEXIST, JNI_EINVAL,
+    JNI_ENOMEM, JNI_ERR, JNI_EVERSION, JNI_FALSE, JNI_OK, JNI_VERSION_1_8,
 };
 use std::ffi::CString;
 use std::os::raw::c_void;
@@ -9,9 +9,8 @@ use std::ptr;
 
 // =================================================================================================
 
-#[link(name="jvm")]
-extern {
-}
+#[link(name = "jvm")]
+extern "C" {}
 
 // =================================================================================================
 
@@ -62,17 +61,13 @@ pub fn jvalue_from_jshort(arg: jshort) -> jvalue {
 
 ///
 pub fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
-    return unsafe {
-        !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null()
-    }
+    return unsafe { !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() };
 }
 
 ///
 pub fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
-
     // A JVM exception occurred.
     if jvm_exception_occured(jni_environment) {
-
         unsafe {
             // Print the JVM exception.
             (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
@@ -85,10 +80,8 @@ pub fn print_and_panic_on_jvm_exception(jni_environment: *mut JNIEnv) {
 
 ///
 pub fn print_jvm_exception(jni_environment: *mut JNIEnv) {
-
     // A JVM exception occurred.
     if jvm_exception_occured(jni_environment) {
-
         unsafe {
             // Print the JVM exception.
             (**jni_environment).ExceptionDescribe.unwrap()(jni_environment);
@@ -100,13 +93,11 @@ pub fn print_jvm_exception(jni_environment: *mut JNIEnv) {
 
 /// Holds a reference to the embedded JVM.
 pub struct Jvm {
-
     /// The JVM.
     jvm: *mut JavaVM,
 }
 
 impl Jvm {
-
     ///
     pub fn jvm(&self) -> *mut JavaVM {
         self.jvm
@@ -130,7 +121,6 @@ impl Jvm {
     /// }
     /// ```
     pub fn new(jvm_option_strings: &[&str]) -> Jvm {
-
         let mut jvm_option_cstrings: Vec<CString> = Vec::new();
 
         // Wrap the JVM option string slices in a vector of `CString`s.
@@ -144,7 +134,7 @@ impl Jvm {
         for jvm_option_cstring in &jvm_option_cstrings {
             let jvm_option = JavaVMOption {
                 optionString: jvm_option_cstring.as_ptr() as *mut i8,
-                extraInfo: ptr::null_mut() as *mut c_void
+                extraInfo: ptr::null_mut() as *mut c_void,
             };
 
             jvm_options.push(jvm_option);
@@ -155,7 +145,7 @@ impl Jvm {
             version: JNI_VERSION_1_8,
             options: jvm_options.as_mut_ptr(),
             nOptions: jvm_options.len() as i32,
-            ignoreUnrecognized: JNI_FALSE
+            ignoreUnrecognized: JNI_FALSE,
         };
 
         // Initialize space for a pointer to the JNI environment.
@@ -167,13 +157,12 @@ impl Jvm {
             JNI_CreateJavaVM(
                 &mut jvm,
                 (&mut jni_environment as *mut *mut JNIEnv) as *mut *mut c_void,
-                (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void
+                (&mut jvm_arguments as *mut JavaVMInitArgs) as *mut c_void,
             )
         };
 
         // There was an error while trying to instantiate the JVM.
         if result != JNI_OK {
-
             // Translate the error code to a message.
             let error_message = match result {
                 JNI_EDETACHED => "thread detached from JVM",
@@ -195,7 +184,6 @@ impl Jvm {
 // =================================================================================================
 
 impl Drop for Jvm {
-
     fn drop(&mut self) {
 
         // The Java 7 documentation states that VM unloading is not supported.
