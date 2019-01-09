@@ -6,6 +6,7 @@ use jni_sys::{jobjectArray, jsize};
 jvm_array_wrapper!(JvmObjectArray, jobjectArray);
 
 impl<'a> JvmObjectArray<'a> {
+    #![allow(clippy::new_ret_no_self)]
     ///
     pub fn new(
         jvm_attachment: &'a JvmAttachment,

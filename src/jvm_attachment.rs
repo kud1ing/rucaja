@@ -16,6 +16,7 @@ pub struct JvmAttachment {
 }
 
 impl JvmAttachment {
+    #![allow(clippy::new_ret_no_self)]
     ///
     pub fn new(jvm: *mut JavaVM) -> Option<JvmAttachment> {
         // Initialize the data.

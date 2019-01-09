@@ -8,6 +8,7 @@ use std::ptr;
 jvm_wrapper!(JvmString, jstring);
 
 impl<'a> JvmString<'a> {
+    #![allow(clippy::new_ret_no_self)]
     /// Creates and returns a JVM string.
     pub fn new(jvm_attachment: &'a JvmAttachment, string: &str) -> Option<JvmString<'a>> {
         let string_as_cstring = CString::new(string).ok()?;
@@ -25,7 +26,7 @@ impl<'a> JvmString<'a> {
 
 impl<'a> ToString for JvmString<'a> {
     fn to_string(&self) -> String {
-        return unsafe {
+        unsafe {
             // Allocate a char buffer for the `jstring` in the JVM.
             let char_buffer: *const c_char = (**self.jvm_attachment.jni_environment())
                 .GetStringUTFChars
@@ -49,6 +50,6 @@ impl<'a> ToString for JvmString<'a> {
 
             // Return that `String`.
             string
-        };
+        }
     }
 }

@@ -241,6 +241,7 @@ impl<'a> JvmMethod {
         self.jvm_method_ptr
     }
 
+    #[allow(clippy::new_ret_no_self)]
     ///
     pub fn new(jvm_method_ptr: jmethodID) -> Option<JvmMethod> {
         if jvm_method_ptr.is_null() {

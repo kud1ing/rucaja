@@ -61,7 +61,7 @@ pub fn jvalue_from_jshort(arg: jshort) -> jvalue {
 
 ///
 pub fn jvm_exception_occured(jni_environment: *mut JNIEnv) -> bool {
-    return unsafe { !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() };
+    unsafe { !(**jni_environment).ExceptionOccurred.unwrap()(jni_environment).is_null() }
 }
 
 ///

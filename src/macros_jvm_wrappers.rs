@@ -67,13 +67,11 @@ macro_rules! jvm_array_wrapper {
         impl<'a> $rust_struct_name<'a> {
             /// Returns the array length.
             pub fn length(&self) -> jsize {
-                let jvm_array_length = unsafe {
+                unsafe {
                     (**self.jvm_attachment.jni_environment())
                         .GetArrayLength
                         .unwrap()(self.jvm_attachment.jni_environment(), self.jvm_ptr)
-                };
-
-                jvm_array_length
+                }
             }
         }
     };
